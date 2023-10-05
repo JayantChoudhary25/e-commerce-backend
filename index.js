@@ -14,6 +14,13 @@ connectDB();
 
 const app = express();
 
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://e-commerce-backend-brown.vercel.app", "*"],
+  credentials: true, // Enable credentials (cookies, HTTP authentication) in cross-origin requests
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use(cookieParser('secret'));
