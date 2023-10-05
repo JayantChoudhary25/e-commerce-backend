@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const ErrorResponse = require("../utils/errorRes");
 const slugify = require("slugify");
 const validateMongoDbId = require("../utils/validateMongodbId");
+const mongoose = require("mongoose"); 
 
 exports.createProduct = async (req, res) => {
   try {
@@ -18,15 +19,24 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
-  const id = req.body;
-  validateMongoDbId(id);
+  const { id } = req.params; 
+
   try {
     if (req.body.title) {
       req.body.slug = slugify(req.body.title);
     }
-    const updateProduct = await Product.findOneAndUpdate({ _id: id }, req.body, {
+
+    // Use mongoose.Types.ObjectId to create a valid ObjectId from the extracted id
+    const objectId = new mongoose.Types.ObjectId(id);
+
+    const updateProduct = await Product.findOneAndUpdate({ _id: objectId }, req.body, {
       new: true,
     });
+
+    if (!updateProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     res.json(updateProduct);
   } catch (error) {
     throw new Error(error);
@@ -34,14 +44,14 @@ exports.updateProduct = async (req, res) => {
 };
 
 exports.deleteProduct = async (req, res) => {
-  const { productId } = req.body;
-  validateMongoDbId(productId);
+  const { id } = req.params;
+  validateMongoDbId(id);
   try {
-    const deleteProduct = await Product.findOneAndDelete({ _id: productId });
+    const deleteProduct = await Product.findOneAndDelete({ _id: id });
     if (!deleteProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
-    res.json(deleteProduct);
+    res.json({ message: "Product Deleted", deleteProduct});
   } catch (error) {
     throw new Error(error);
   }
@@ -51,7 +61,7 @@ exports.getaProduct = async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const findProduct = await Product.findById(id);
+    const findProduct = await Product.findById({ _id: id });
     res.json(findProduct);
   } catch (error) {
     throw new Error(error);
