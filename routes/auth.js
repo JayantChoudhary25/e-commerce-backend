@@ -8,21 +8,21 @@ const {
   logout,
   forgotPassword,
   resetPassword,
-  handleRefreshToken,
+//   handleRefreshToken,
   getallUser,
   getaUser,
   deleteaUser,
   updatedUser,
-  blockUser,
-  unblockUser,
-  updatePassword,
-  forgotPasswordToken,
+//   blockUser,
+//   unblockUser,
+//   updatePassword,
+//   forgotPasswordToken,
   getWishlist,
   saveAddress,
   userCart,
   getUserCart,
   emptyCart,
-  applyCoupon,
+//   applyCoupon,
   createOrder,
   getOrders,
   updateOrderStatus,
@@ -38,7 +38,7 @@ router.route("/adminLogin").post(adminLogin);
 
 router.route("/logout").get(logout);
 
-router.get("/refresh", handleRefreshToken);
+// router.get("/refresh", handleRefreshToken);
 
 router.route("/forgotpassword").post(forgotPassword);
 
