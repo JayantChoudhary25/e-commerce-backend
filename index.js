@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://e-commerce-backend-brown.vercel.app", "https://nextjs-app-wheat-three.vercel.app", "https://nextjs-app-wheat-three.vercel.app/", "https://nextjs-app-wheat-three.vercel.app/*", "https://nextjs-app-wheat-three.vercel.app/"*"" , "*"],
+  origin: ["http://localhost:3000", "https://e-commerce-backend-brown.vercel.app", "https://nextjs-app-wheat-three.vercel.app", "*"],
   credentials: true, 
 };
 
