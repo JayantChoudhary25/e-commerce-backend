@@ -15,7 +15,6 @@ const {
   updatedUser,
   blockUser,
   unblockUser,
-  handleRefreshToken,
   updatePassword,
   forgotPasswordToken,
   getWishlist,
@@ -56,8 +55,6 @@ router.get("/get-orders", isAuthenticatedUser, getOrders);
 router.get("/getallorders", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
 
 router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
-
-router.get("/refresh", handleRefreshToken);
 
 router.get("/wishlist", isAuthenticatedUser, getWishlist);
 router.get("/cart", isAuthenticatedUser, getUserCart);
