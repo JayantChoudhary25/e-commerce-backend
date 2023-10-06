@@ -40,6 +40,7 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/private", require("./routes/private"));
 app.use("/api/product", require("./routes/product"));
+app.use("/api/category", require("./routes/prodCategory"));
 
 // Error Handler 
 app.use(errorHandler);
