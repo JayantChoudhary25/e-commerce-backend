@@ -8,6 +8,14 @@ const mongoose = require("mongoose");
 
 exports.createProduct = async (req, res) => {
   try {
+    const existingProduct = await Product.findOne(
+      { title: { $regex: new RegExp(req.body.title, "i") } }
+    );    
+
+    if (existingProduct) {
+      return res.status(400).json({ error: "Product with the same title already exists" });
+    }
+
     if (req.body.title) {
       req.body.slug = slugify(req.body.title);
     }
