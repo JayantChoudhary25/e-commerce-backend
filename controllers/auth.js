@@ -28,11 +28,10 @@ exports.login = async (req, res, next) => {
   if (!email || !password) {
     return next(new ErrorResponse("Please provide Email and Password", 400));
   }
-  
+
   try {
-    // check if user exists or not
     const findUser = await User.findOne({ email }).select("+password");
-    
+
     if (findUser && (await findUser.matchPasswords(password))) {
       const refreshToken = await generateRefreshToken(findUser?._id);
       const updateuser = await User.findByIdAndUpdate(
@@ -46,7 +45,7 @@ exports.login = async (req, res, next) => {
         httpOnly: true,
         maxAge: 72 * 60 * 60 * 1000,
       });
-      // sendToken(findUser, 200, res); // Call your sendToken function
+
       res.json({
         _id: findUser?._id,
         firstname: findUser?.firstname,
@@ -57,7 +56,7 @@ exports.login = async (req, res, next) => {
         wishlist: findUser?.wishlist,
         address: findUser?.address,
         token: generateToken(findUser?._id),
-        refreshToken: refreshToken, // Include the refreshToken here
+        refreshToken: refreshToken,
       });
     } else {
       return next(new ErrorResponse("Invalid Credentials", 401));
@@ -74,7 +73,6 @@ exports.adminLogin = async (req, res, next) => {
   const { email, password } = req.body;
   
   try {
-    // check if admin exists or not
     const findAdmin = await User.findOne({ email }).select("+password");
     
     if (!findAdmin) {

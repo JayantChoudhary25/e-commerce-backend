@@ -60,7 +60,9 @@ router.get("/wishlist", isAuthenticatedUser, getWishlist);
 
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);
 
-router.get("/getaUser/:id", isAuthenticatedUser, authorizeRoles("admin"), getaUser);
+// router.get("/getaUser/:id", isAuthenticatedUser, authorizeRoles("admin"), getaUser);
+
+router.get("/getaUser/:id", getaUser);
 
 router.delete("/empty-cart", isAuthenticatedUser, emptyCart);
 
@@ -70,7 +72,11 @@ router.put( "/order/update-order/:id", isAuthenticatedUser, authorizeRoles("admi
 
 router.put("/edit-user", isAuthenticatedUser, updatedUser);
 
-router.put("/save-address", isAuthenticatedUser, saveAddress);
+// router.put("/save-address", isAuthenticatedUser, saveAddress);
+
+router.put("/save-address", saveAddress);
+
+
 
 // router.put("/block-user/:id", isAuthenticatedUser, authorizeRoles("admin"), blockUser);
 
