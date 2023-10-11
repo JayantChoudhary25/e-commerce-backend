@@ -11,6 +11,8 @@ router.route("/deleteProduct/:id").delete( deleteProduct);
 router.route("/getaProduct/:id").get(getaProduct);
 router.route("/getAllProduct").get(getAllProduct);
 router.route("/rating").post(isAuthenticatedUser, rating);
-router.route("/addToWishlist").post(isAuthenticatedUser, addToWishlist);
+// router.route("/addToWishlist").post(isAuthenticatedUser, addToWishlist);
+
+router.route("/addToWishlist").post(addToWishlist);
 
 module.exports = router;
