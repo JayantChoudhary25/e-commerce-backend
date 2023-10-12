@@ -82,6 +82,17 @@ exports.getAllProduct = async (req, res) => {
     const queryObj = { ...req.query };
     const excludeFields = ["page", "sort", "limit", "fields"];
     excludeFields.forEach((el) => delete queryObj[el]);
+
+    const searchQuery = queryObj.search;
+    if (searchQuery) {
+      queryObj.$or = [
+        { title: { $regex: `^${searchQuery}`, $options: 'i' } },
+        { category: { $regex: `^${searchQuery}`, $options: 'i' } },
+        { brand: { $regex: `^${searchQuery}`, $options: 'i' } },
+      ];
+      delete queryObj.search;
+    }
+
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
