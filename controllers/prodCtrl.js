@@ -65,6 +65,16 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
+exports.deleteBulkProducts = async (req, res) => {
+  try {
+    const { ProductIds } = req.body;
+    const deleteProducts = await Product.deleteMany({ _id: { $in: ProductIds } });
+    res.json(deleteProducts);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 exports.getaProduct = async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
