@@ -47,6 +47,7 @@ app.use("/api/private", require("./routes/private"));
 app.use("/api/product", require("./routes/product"));
 app.use("/api/category", require("./routes/prodCategory"));
 app.use("/api/brand", require("./routes/brand"));
+app.use("/api/vendor", require("./routes/vendor"));
 
 // Error Handler 
 app.use(errorHandler);

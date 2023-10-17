@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { createProduct, updateProduct, deleteProduct, deleteBulkProducts, getAllProduct, getaProduct, rating, addToWishlist} = require("../controllers/prodCtrl");
+const { createProduct, updateProduct, deleteProduct, deleteBulkProducts, getAllProduct, getProductsByVendor,updateProductVendor,getaProduct, rating, addToWishlist} = require("../controllers/prodCtrl");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 // isAuthenticatedUser, authorizeRoles("admin"),
 router.route("/createProduct").post( createProduct);
@@ -11,6 +11,10 @@ router.route("/deleteBulkProducts").post( deleteBulkProducts);
 
 router.route("/getaProduct/:id").get(getaProduct);
 router.route("/getAllProduct").get(getAllProduct);
+router.route("/getProductsByVendor/:vendorId").get(getProductsByVendor);
+
+router.route("/updateProductVendor/:productId").post(updateProductVendor)
+
 router.route("/rating").post(isAuthenticatedUser, rating);
 // router.route("/addToWishlist").post(isAuthenticatedUser, addToWishlist);
 

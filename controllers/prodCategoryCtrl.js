@@ -35,6 +35,16 @@ exports.deleteCategory = async (req, res) => {
   }
 };
 
+exports.deleteBulkCategory = async (req, res) => {
+  try {
+    const { CategoryIds } = req.body;
+    const deleteCategorys = await Category.deleteMany({ _id: { $in: CategoryIds } });
+    res.json(deleteCategorys);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 exports.getCategory = async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);

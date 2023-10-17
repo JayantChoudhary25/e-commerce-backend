@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { createCategory, updateCategory, deleteCategory, deleteBulkCategory,getCategory, getallCategory } = require("../controllers/prodCategoryCtrl");
+const { createVendor, updateVendor, deleteVendor, getAllVendors} = require("../controllers/vendorCtrl");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 // router.post("/createCategory", isAuthenticatedUser, authorizeRoles("admin"), createCategory);
@@ -10,16 +10,14 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 // router.delete("/deleteCategory/:id", isAuthenticatedUser, authorizeRoles("admin"), deleteCategory);
 
-router.post("/createCategory",  createCategory);
+router.post("/createVendor",  createVendor);
 
-router.put("/updateCategory/:id",  updateCategory);
+router.put("/updateVendor/:id",  updateVendor);
 
-router.delete("/deleteCategory/:id",  deleteCategory);
+router.delete("/deleteVendor/:id",  deleteVendor);
 
-router.post("/deleteBulkCategory",  deleteBulkCategory);
+// router.get("/getBrand/:id", getBrand);
 
-router.get("/getCategory/:id", getCategory);
-
-router.get("/getallCategory", getallCategory);
+router.get("/getAllVendors", getAllVendors);
 
 module.exports = router;

@@ -143,6 +143,29 @@ exports.getAllProduct = async (req, res) => {
   }
 };
 
+exports.getProductsByVendor = async (req, res) => {
+  const { vendorId } = req.params;
+  validateMongoDbId(vendorId);
+  const products = await Product.find({ vendor_id: vendorId }).populate('vendor_id');
+  res.json(products);
+};
+
+exports.updateProductVendor = async (req, res) => {
+  const { productId } = req.params;
+  const { vendorId } = req.body;
+
+  validateMongoDbId(productId);
+  validateMongoDbId(vendorId);
+
+  const product = await Product.findByIdAndUpdate(
+    productId,
+    { vendor_id: vendorId },
+    { new: true }
+  );
+
+  res.json(product);
+};
+
 exports.addToWishlist = async (req, res) => {
     const { _id } = req.user;
     const { prodId } = req.body;
