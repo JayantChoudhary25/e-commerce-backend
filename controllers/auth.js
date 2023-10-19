@@ -369,8 +369,8 @@ exports.updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const { _id } = req.user;
-    const user = await User.findById(_id);
-
+    const user = await User.findById(_id).select("+password");
+        
     // Verify the current password
     const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isPasswordMatch) {
