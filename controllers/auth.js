@@ -36,6 +36,7 @@ exports.login = async (req, res, next) => {
 
   try {
     const findUser = await User.findOne({ email }).select("+password");
+    const isPasswordMatch = await bcrypt.compare(password, findUser.password);
 
     if (findUser && (await findUser.matchPasswords(password))) {
       const refreshToken = await generateRefreshToken(findUser?._id);
@@ -370,17 +371,18 @@ exports.updatePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const { _id } = req.user;
     const user = await User.findById(_id).select("+password");
-        
+        console.log(_id);
     // Verify the current password
-    const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+    const isPasswordMatch = await user.matchPasswords(currentPassword)
     if (!isPasswordMatch) {
       return res.status(401).json({ message: 'Current password is incorrect' });
     }
 
     // Hash the new password and update it in the database
-    const salt = await bcrypt.genSalt(10);
-    const newPasswordHash = await bcrypt.hash(newPassword, salt);
-    user.password = newPasswordHash;
+    // const salt = await bcrypt.genSalt(10);
+    // const newPasswordHash = await bcrypt.hash(newPassword, salt);
+    
+    user.password = newPassword;
     user.passwordChangedAt = Date.now();
     await user.save();
 
