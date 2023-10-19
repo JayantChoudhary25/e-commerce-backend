@@ -13,6 +13,18 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please Enter Lastname"],
     },
+    dob: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    language: {
+      type: String,
+    },
+    about: {
+      type: String,
+    },
     email: {
       type: String,
       required: [true, "Please Enter Email Address"],

@@ -245,6 +245,10 @@ exports.updatedUser = async (req, res) => {
         lastname: req?.body?.lastname,
         email: req?.body?.email,
         mobile: req?.body?.mobile,
+        dob: req?.body?.dob,
+        country: req?.body?.country,
+        language: req?.body?.language,
+        about: req?.body?.about
       },
       {
         new: true,
