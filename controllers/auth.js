@@ -6,19 +6,26 @@ const ErrorResponse = require("../utils/errorRes");
 const sendEmail = require("../utils/sendEmail");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
 
 exports.register = async (req, res, next) => {
-  const email = req.body.email;
 
-  const findUser = await User.findOne({ email: email });
+  const { email, mobile } = req.body;
 
-  if (!findUser) {
+  // Check if the email or mobile already exists in the database
+  const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
+
+  if (existingUser) {
+    return res.status(400).json({ error: "User with this email or mobile number already exists." });
+  }
+
+  try {
     const newUser = await User.create(req.body);
     sendToken(newUser, 201, res);
-  } else {
-    throw new Error("User Already Exists");
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -361,16 +368,37 @@ exports.deleteaUser = async (req, res) => {
 // });
 
 exports.updatePassword = async (req, res) => {
-  const { _id } = req.user;
-  const { password } = req.body;
-  validateMongoDbId(_id);
-  const user = await User.findById(_id);
-  if (password) {
-    user.password = password;
-    const updatedPassword = await user.save();
-    res.json(updatedPassword);
-  } else {
-    res.json(user);
+  // const { _id } = req.user;
+  // const { password } = req.body;
+  // validateMongoDbId(_id);
+  // const user = await User.findById(_id);
+  // if (password) {
+  //   user.password = password;
+  //   const updatedPassword = await user.save();
+  //   res.json(updatedPassword);
+  // } else {
+  //   res.json(user);
+  // }
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+
+    // Verify the current password
+    const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Hash the new password and update it in the database
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+    user.password = newPasswordHash;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Password change failed' });
   }
 };
 
