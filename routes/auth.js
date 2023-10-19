@@ -15,7 +15,7 @@ const {
   updatedUser,
 //   blockUser,
 //   unblockUser,
-//   updatePassword,
+  updatePassword,
 //   forgotPasswordToken,
   getWishlist,
   saveAddress,
@@ -39,6 +39,9 @@ router.route("/adminLogin").post(adminLogin);
 router.route("/logout").get(logout);
 
 // router.get("/refresh", handleRefreshToken);
+
+// router.route("/updatePassword").post(updatePassword);
+router.post("/updatePassword", isAuthenticatedUser, updatePassword)
 
 router.route("/forgotpassword").post(forgotPassword);
 

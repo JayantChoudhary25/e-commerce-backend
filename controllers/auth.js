@@ -11,10 +11,8 @@ const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
 
 exports.register = async (req, res, next) => {
-
   const { email, mobile } = req.body;
 
-  // Check if the email or mobile already exists in the database
   const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
 
   if (existingUser) {
@@ -368,20 +366,10 @@ exports.deleteaUser = async (req, res) => {
 // });
 
 exports.updatePassword = async (req, res) => {
-  // const { _id } = req.user;
-  // const { password } = req.body;
-  // validateMongoDbId(_id);
-  // const user = await User.findById(_id);
-  // if (password) {
-  //   user.password = password;
-  //   const updatedPassword = await user.save();
-  //   res.json(updatedPassword);
-  // } else {
-  //   res.json(user);
-  // }
   try {
     const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user._id);
+    const { _id } = req.user;
+    const user = await User.findById(_id);
 
     // Verify the current password
     const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
@@ -398,6 +386,7 @@ exports.updatePassword = async (req, res) => {
 
     res.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Password change failed' });
   }
 };
