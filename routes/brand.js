@@ -10,7 +10,7 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 // router.delete("/deleteCategory/:id", isAuthenticatedUser, authorizeRoles("admin"), deleteCategory);
 
-router.post("/createBrand", isAuthenticatedUser, createBrand);
+router.post("/createBrand", createBrand);
 
 router.put("/updateBrand/:id",  updateBrand);
 

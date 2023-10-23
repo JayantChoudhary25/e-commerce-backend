@@ -371,25 +371,21 @@ exports.updatePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const { _id } = req.user;
     const user = await User.findById(_id).select("+password");
-        console.log(_id);
+    console.log(_id);
     // Verify the current password
-    const isPasswordMatch = await user.matchPasswords(currentPassword)
+    const isPasswordMatch = await user.matchPasswords(currentPassword);
     if (!isPasswordMatch) {
-      return res.status(401).json({ message: 'Current password is incorrect' });
+      return res.status(401).json({ message: "Current password is incorrect" });
     }
 
-    // Hash the new password and update it in the database
-    // const salt = await bcrypt.genSalt(10);
-    // const newPasswordHash = await bcrypt.hash(newPassword, salt);
-    
     user.password = newPassword;
     user.passwordChangedAt = Date.now();
     await user.save();
 
-    res.status(200).json({ message: 'Password changed successfully' });
+    res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Password change failed' });
+    res.status(500).json({ error: "Password change failed" });
   }
 };
 
