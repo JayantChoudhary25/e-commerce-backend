@@ -41,7 +41,7 @@ router.route("/logout").get(logout);
 // router.get("/refresh", handleRefreshToken);
 
 // router.route("/updatePassword").post(updatePassword);
-router.post("/updatePassword", isAuthenticatedUser, updatePassword)
+router.post("/updatePassword", updatePassword)
 
 router.route("/forgotpassword").post(forgotPassword);
 
