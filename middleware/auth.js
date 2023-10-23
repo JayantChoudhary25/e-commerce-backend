@@ -32,13 +32,13 @@ exports.protect = async (req, res, next) => {
 };
 
 exports.isAuthenticatedUser = async (req, res, next) => {
-  const { refreshToken } = req.cookies;
+  const { token } = req.cookies;
 
-  if (!refreshToken) {
+  if (!token) {
     return next(new ErrorResponse("Please Login to access this resource", 401));
   }
 
-  const decodedData = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
 
   req.user = await User.findById(decodedData.id);
 

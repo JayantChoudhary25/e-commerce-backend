@@ -99,7 +99,7 @@ exports.adminLogin = async (req, res, next) => {
         { new: true }
       );
 
-      res.cookie("refreshToken", refreshToken, {
+      res.cookie("token", generateToken(findAdmin?._id), {
         httpOnly: true,
         maxAge: 72 * 60 * 60 * 1000,
       });
