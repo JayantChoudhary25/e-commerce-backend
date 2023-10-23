@@ -47,7 +47,7 @@ exports.login = async (req, res, next) => {
         },
         { new: true }
       );
-      res.cookie("refreshToken", refreshToken, {
+      res.cookie("token", generateToken(findUser?._id), {
         httpOnly: true,
         maxAge: 72 * 60 * 60 * 1000,
       });
@@ -297,11 +297,11 @@ exports.getallUser = async (req, res) => {
 };
 
 exports.getaUser = async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
+  const { _id } = req.user;
+  validateMongoDbId(_id);
 
   try {
-    const getaUser = await User.findById(id);
+    const getaUser = await User.findById(_id);
     res.json({
       getaUser,
     });
@@ -428,6 +428,7 @@ exports.updatePassword = async (req, res) => {
 
 exports.getWishlist = async (req, res) => {
   const { _id } = req.user;
+  console.log(_id);
   try {
     const findUser = await User.findById(_id).populate("wishlist");
     res.json(findUser);

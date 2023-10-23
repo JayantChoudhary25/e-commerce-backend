@@ -40,7 +40,6 @@ router.route("/logout").get(logout);
 
 // router.get("/refresh", handleRefreshToken);
 
-// router.route("/updatePassword").post(updatePassword);
 router.post("/updatePassword/:id", updatePassword)
 
 router.route("/forgotpassword").post(forgotPassword);
@@ -51,7 +50,7 @@ router.post("/cart", isAuthenticatedUser, userCart);
 
 router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 
-router.get("/all-users", getallUser);
+router.get("/all-users", isAuthenticatedUser, getallUser);
 
 router.get("/get-orders", isAuthenticatedUser, getOrders);
 
@@ -61,13 +60,13 @@ router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"),
 
 // router.get("/wishlist", isAuthenticatedUser, getWishlist);
 
-router.get("/wishlist", getWishlist);
+router.get("/wishlist",isAuthenticatedUser, getWishlist);
 
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);
 
 // router.get("/getaUser/:id", isAuthenticatedUser, authorizeRoles("admin"), getaUser);
 
-router.get("/getaUser/:id", getaUser);
+router.get("/getaUser", isAuthenticatedUser, getaUser);
 
 router.delete("/empty-cart", isAuthenticatedUser, emptyCart);
 
