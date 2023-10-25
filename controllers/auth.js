@@ -9,6 +9,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
+const sendToken = require("../utils/jwtToken");
 
 exports.register = async (req, res, next) => {
   const { email, mobile } = req.body;
@@ -16,7 +17,9 @@ exports.register = async (req, res, next) => {
   const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
 
   if (existingUser) {
-    return res.status(400).json({ error: "User with this email or mobile number already exists." });
+    return res
+      .status(400)
+      .json({ error: "User with this email or mobile number already exists." });
   }
 
   try {
@@ -36,35 +39,10 @@ exports.login = async (req, res, next) => {
 
   try {
     const findUser = await User.findOne({ email }).select("+password");
-    const isPasswordMatch = await bcrypt.compare(password, findUser.password);
+    // const isPasswordMatch = await bcrypt.compare(password, findUser.password);
 
     if (findUser && (await findUser.matchPasswords(password))) {
-      const refreshToken = await generateRefreshToken(findUser?._id);
-      const updateuser = await User.findByIdAndUpdate(
-        findUser.id,
-        {
-          refreshToken: refreshToken,
-        },
-        { new: true }
-      );
-      res.cookie("token", generateToken(findUser?._id), {
-        httpOnly: true,
-        maxAge: 72 * 60 * 60 * 1000,
-        secure: true,
-      });
-
-      res.json({
-        _id: findUser?._id,
-        firstname: findUser?.firstname,
-        lastname: findUser?.lastname,
-        email: findUser?.email,
-        mobile: findUser?.mobile,
-        cart: findUser?.cart,
-        wishlist: findUser?.wishlist,
-        address: findUser?.address,
-        token: generateToken(findUser?._id),
-        refreshToken: refreshToken,
-      });
+      sendToken(findUser, 201, res);
     } else {
       return next(new ErrorResponse("Invalid Credentials", 401));
     }
@@ -91,29 +69,29 @@ exports.adminLogin = async (req, res, next) => {
     }
 
     if (await findAdmin.matchPasswords(password)) {
-      const refreshToken = await generateRefreshToken(findAdmin?._id);
-      const updateuser = await User.findByIdAndUpdate(
-        findAdmin.id,
-        {
-          refreshToken: refreshToken,
-        },
-        { new: true }
-      );
+      // const refreshToken = await generateRefreshToken(findAdmin?._id);
+      // const updateuser = await User.findByIdAndUpdate(
+      //   findAdmin.id,
+      //   {
+      //     refreshToken: refreshToken,
+      //   },
+      //   { new: true }
+      // );
 
-      res.cookie("token", generateToken(findAdmin?._id), {
-        httpOnly: true,
-        maxAge: 72 * 60 * 60 * 1000,
-        secure: true,
-      });
-
-      res.json({
-        _id: findAdmin?._id,
-        firstname: findAdmin?.firstname,
-        lastname: findAdmin?.lastname,
-        email: findAdmin?.email,
-        mobile: findAdmin?.mobile,
-        token: generateToken(findAdmin?._id),
-      });
+      // res.cookie("token", generateToken(findAdmin?._id), {
+      //   httpOnly: true,
+      //   maxAge: 72 * 60 * 60 * 1000,
+      //   secure: true,
+      // });
+      sendToken(findAdmin, 201, res);
+      // res.json({
+      //   _id: findAdmin?._id,
+      //   firstname: findAdmin?.firstname,
+      //   lastname: findAdmin?.lastname,
+      //   email: findAdmin?.email,
+      //   mobile: findAdmin?.mobile,
+      //   token: generateToken(findAdmin?._id),
+      // });
     } else {
       throw new Error("Invalid Credentials");
     }
@@ -221,10 +199,10 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
-const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedToken();
-  res.status(statusCode).json({ success: true, token });
-};
+// const sendToken = (user, statusCode, res) => {
+//   const token = user.getSignedToken();
+//   res.status(statusCode).json({ success: true, token });
+// };
 
 exports.handleRefreshToken = async (req, res) => {
   const cookie = req.cookies;
