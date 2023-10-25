@@ -64,7 +64,10 @@ router.get("/getUserCart", isAuthenticatedUser, getUserCart);
 
 // router.get("/getaUser/:id", isAuthenticatedUser, authorizeRoles("admin"), getaUser);
 
-router.get("/getaUser", isAuthenticatedUser, getaUser);
+// router.get("/getaUser", isAuthenticatedUser, getaUser);
+router
+  .route("/getaUser")
+  .get(isAuthenticatedUser,  getaUser);
 
 router.delete("/empty-cart", isAuthenticatedUser, emptyCart);
 
