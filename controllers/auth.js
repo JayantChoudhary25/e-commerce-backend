@@ -384,7 +384,7 @@ exports.updatePassword = async (req, res) => {
 // };
 
 exports.getWishlist = async (req, res) => {
-  const { _id } = req.user;
+  const { _id } = req.body;
   console.log(_id);
   try {
     const findUser = await User.findById(_id).populate("wishlist");

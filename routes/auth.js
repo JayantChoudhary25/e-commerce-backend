@@ -58,7 +58,7 @@ router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"),
 
 // router.get("/wishlist", isAuthenticatedUser, getWishlist);
 
-router.get("/wishlist",isAuthenticatedUser, getWishlist);
+router.get("/wishlist", getWishlist);
 
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);
 
