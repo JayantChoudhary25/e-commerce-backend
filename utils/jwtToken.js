@@ -9,6 +9,7 @@ const sendToken = (user, statusCode, res) => {
     maxAge: 72 * 60 * 60 * 1000,
     httpOnly: true,
     secure: true,
+    path: '/',
   };
 
   res.status(statusCode).cookie("token", token, options).json({
