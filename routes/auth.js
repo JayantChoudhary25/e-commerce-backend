@@ -60,7 +60,7 @@ router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"),
 
 router.get("/wishlist", getWishlist);
 
-router.get("/getUserCart", isAuthenticatedUser, getUserCart);
+router.get("/getUserCart", getUserCart);
 
 // router.get("/getaUser/:id", isAuthenticatedUser, authorizeRoles("admin"), getaUser);
 
@@ -69,7 +69,7 @@ router
   .route("/getaUser")
   .get( getaUser);
 
-router.delete("/empty-cart", isAuthenticatedUser, emptyCart);
+router.delete("/empty-cart", emptyCart);
 
 router.delete("/deleteaUser/:id", deleteaUser);
 
