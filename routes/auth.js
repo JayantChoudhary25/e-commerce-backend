@@ -44,7 +44,7 @@ router.route("/forgotpassword").post(forgotPassword);
 
 router.route("/resetpassword/:resetToken").put(resetPassword);
 
-router.post("/cart", isAuthenticatedUser, userCart);
+router.post("/cart",  userCart);
 
 router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 

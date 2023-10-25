@@ -395,8 +395,8 @@ exports.getWishlist = async (req, res) => {
 };
 
 exports.userCart = async (req, res) => {
-  const { cart } = req.body;
-  const { _id } = req.user;
+  const { cart , _id} = req.body;
+  // const { _id } = req.user;
   validateMongoDbId(_id);
   try {
     let products = [];
@@ -431,7 +431,7 @@ exports.userCart = async (req, res) => {
 };
 
 exports.getUserCart = async (req, res) => {
-  const { _id } = req.user;
+  const { _id } = req.body;
   validateMongoDbId(_id);
   try {
     const cart = await Cart.findOne({ orderby: _id }).populate(
@@ -444,7 +444,7 @@ exports.getUserCart = async (req, res) => {
 };
 
 exports.emptyCart = async (req, res) => {
-  const { _id } = req.user;
+  const { _id } = req.body;
   validateMongoDbId(_id);
   try {
     const user = await User.findOne({ _id });
