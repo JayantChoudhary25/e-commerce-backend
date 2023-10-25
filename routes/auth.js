@@ -38,8 +38,6 @@ router.route("/adminLogin").post(adminLogin);
 
 router.route("/logout").get(logout);
 
-// router.get("/refresh", handleRefreshToken);
-
 router.post("/updatePassword/:id", updatePassword)
 
 router.route("/forgotpassword").post(forgotPassword);

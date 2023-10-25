@@ -50,6 +50,7 @@ exports.login = async (req, res, next) => {
       res.cookie("token", generateToken(findUser?._id), {
         httpOnly: true,
         maxAge: 72 * 60 * 60 * 1000,
+        secure: true,
       });
 
       res.json({
@@ -102,6 +103,7 @@ exports.adminLogin = async (req, res, next) => {
       res.cookie("token", generateToken(findAdmin?._id), {
         httpOnly: true,
         maxAge: 72 * 60 * 60 * 1000,
+        secure: true,
       });
 
       res.json({
