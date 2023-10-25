@@ -5,10 +5,10 @@ const sendToken = (user, statusCode, res) => {
 
   // options for cookie
   const options = {
-    expire: new Date(Date.now + 24 * 60 * 60 * 1000),
-    //   maxAge: 72 * 60 * 60 * 1000,
-    // httpOnly: true,
-    // secure: true,
+    // expire: new Date(Date.now + 24 * 60 * 60 * 1000),
+    maxAge: 72 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
   };
 
   res.status(statusCode).cookie("token", token, options).json({
