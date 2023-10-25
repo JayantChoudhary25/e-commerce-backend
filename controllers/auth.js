@@ -103,30 +103,12 @@ exports.adminLogin = async (req, res, next) => {
   }
 };
 
-exports.logout = async (req, res, next) => {
-  const cookie = req.cookies;
-  if (!cookie?.refreshToken) {
-    return res.status(400).json({ message: "No Refresh Token in Cookies" });
-  }
-  
-  const refreshToken = cookie.refreshToken;
-  const user = await User.findOne({ refreshToken });
-  
-  if (!user) {
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-    });
-    return res.status(200).json({ message: "Logged Out" });
-  }
-  
-  await User.findOneAndUpdate({ refreshToken: refreshToken }, { refreshToken: "" });
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-  });
-  
-  res.status(200).json({ message: "Logged Out" });
+exports.logout = async (req, res) => {
+  // Clear the token cookie
+  res.clearCookie('token');
+
+  // Send a response indicating successful logout
+  res.status(200).json({ success: true, message: 'Logout successful' });
 };
 
 exports.forgotPassword = async (req, res, next) => {
@@ -198,11 +180,6 @@ exports.resetPassword = async (req, res, next) => {
     next(error);
   }
 };
-
-// const sendToken = (user, statusCode, res) => {
-//   const token = user.getSignedToken();
-//   res.status(statusCode).json({ success: true, token });
-// };
 
 exports.handleRefreshToken = async (req, res) => {
   const cookie = req.cookies;
