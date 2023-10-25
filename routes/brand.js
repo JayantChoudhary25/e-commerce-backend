@@ -20,6 +20,6 @@ router.post("/deleteBulkBrands",  deleteBulkBrands);
 
 router.get("/getBrand/:id", getBrand);
 
-router.get("/getallBrand", getallBrand);
+router.get("/getallBrand", isAuthenticatedUser, getallBrand);
 
 module.exports = router;

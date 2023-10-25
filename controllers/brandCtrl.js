@@ -57,9 +57,11 @@ exports.getBrand = async (req, res) => {
 };
 
 exports.getallBrand = async (req, res) => {
+  const {_id} = req.user;
+  console.log(_id);
   try {
     const getallBrand = await Brand.find();
-    res.json(getallBrand);
+    res.json(getallBrand, _id);
   } catch (error) {
     throw new Error(error);
   }
