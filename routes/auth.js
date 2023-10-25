@@ -38,7 +38,7 @@ router.route("/adminLogin").post(adminLogin);
 
 router.route("/logout").get(logout);
 
-router.post("/updatePassword",isAuthenticatedUser, updatePassword)
+router.post("/updatePassword", updatePassword)
 
 router.route("/forgotpassword").post(forgotPassword);
 
