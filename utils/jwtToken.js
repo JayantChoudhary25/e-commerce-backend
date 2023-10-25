@@ -9,14 +9,22 @@ const sendToken = (user, statusCode, res) => {
     maxAge: 72 * 60 * 60 * 1000,
     httpOnly: true,
     secure: true,
-    path: '/',
+    sameSite: "none",
   };
+  res
+    .status(statusCode)
+    .cookie("token", token, options)
+    .json({
+      success: true,
+      user,
+      token,
+    });
 
-  res.status(statusCode).cookie("token", token, options).json({
-    success: true,
-    user,
-    token,
-  });
+  // res.status(statusCode).cookie("token", token, options).json({
+  //   success: true,
+  //   user,
+  //   token,
+  // });
 };
 
 module.exports = sendToken;
