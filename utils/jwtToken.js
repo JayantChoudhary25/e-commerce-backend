@@ -11,20 +11,11 @@ const sendToken = (user, statusCode, res) => {
     secure: true,
     sameSite: "none",
   };
-  res
-    .status(statusCode)
-    .cookie("token", token, options)
-    .json({
-      success: true,
-      user,
-      token,
-    });
-
-  // res.status(statusCode).cookie("token", token, options).json({
-  //   success: true,
-  //   user,
-  //   token,
-  // });
+  res.status(statusCode).cookie("token", token, options).json({
+    success: true,
+    user,
+    token,
+  });
 };
 
 module.exports = sendToken;

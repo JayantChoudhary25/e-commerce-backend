@@ -9,7 +9,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
-const sendToken = require("../utils/jwtToken");
+// const sendToken = require("../utils/jwtToken");
 
 exports.register = async (req, res, next) => {
   const { email, mobile } = req.body;
@@ -199,10 +199,10 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
-// const sendToken = (user, statusCode, res) => {
-//   const token = user.getSignedToken();
-//   res.status(statusCode).json({ success: true, token });
-// };
+const sendToken = (user, statusCode, res) => {
+  const token = user.getSignedToken();
+  res.status(statusCode).json({ success: true, token });
+};
 
 exports.handleRefreshToken = async (req, res) => {
   const cookie = req.cookies;
