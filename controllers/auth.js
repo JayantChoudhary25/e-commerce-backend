@@ -394,6 +394,7 @@ exports.getWishlist = async (req, res) => {
   }
 };
 
+// CART
 exports.userCart = async (req, res) => {
   const { cart , _id} = req.body;
   // const { _id } = req.user;
