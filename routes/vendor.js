@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { createVendor, updateVendor, deleteVendor, getAllVendors} = require("../controllers/vendorCtrl");
+const { createVendor, updateVendor, deleteVendor, getAllVendors, getaVendor} = require("../controllers/vendorCtrl");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 // router.post("/createCategory", isAuthenticatedUser, authorizeRoles("admin"), createCategory);
@@ -19,5 +19,7 @@ router.delete("/deleteVendor/:id",  deleteVendor);
 // router.get("/getBrand/:id", getBrand);
 
 router.get("/getAllVendors", getAllVendors);
+
+router.post("/getaVendor", getaVendor);
 
 module.exports = router;
