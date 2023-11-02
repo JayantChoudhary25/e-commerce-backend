@@ -413,6 +413,7 @@ exports.getWishlist = async (req, res) => {
 };
 
 // Add to CART
+// Add to CART
 exports.userCart = async (req, res) => {
   const { cart, _id } = req.body;
   validateMongoDbId(_id);
@@ -420,36 +421,54 @@ exports.userCart = async (req, res) => {
   try {
     const user = await User.findById(_id);
 
-    // Check if a cart already exists for the user and remove it if it does
-    await Cart.findOneAndRemove({ orderby: user._id });
+    // Fetch the user's existing cart or create a new one if it doesn't exist
+    let existingCart = await Cart.findOne({ orderby: user._id });
 
-    let products = [];
+    if (!existingCart) {
+      existingCart = new Cart({ orderby: user._id, products: [] });
+    }
 
     for (let i = 0; i < cart.length; i++) {
-      let object = {};
-      object.product = cart[i]._id;
-      object.count = cart[i].count;
-      object.color = cart[i].color;
+      let product = cart[i];
+      let existingProductIndex = -1;
 
-      let getPrice = await Product.findById(cart[i]._id).select("price").exec();
-      object.price = getPrice.price;
-      products.push(object);
+      // Check if the same product already exists in the cart
+      for (let j = 0; j < existingCart.products.length; j++) {
+        if (existingCart.products[j].product.toString() === product._id.toString()) {
+          existingProductIndex = j;
+          break;
+        }
+      }
+
+      if (existingProductIndex !== -1) {
+        // If the product exists, increase the count
+        existingCart.products[existingProductIndex].count += product.count;
+      } else {
+        // If the product doesn't exist, add it to the cart
+        let getPrice = await Product.findById(product._id).select("price").exec();
+
+        existingCart.products.push({
+          product: product._id,
+          count: product.count,
+          color: product.color,
+          price: getPrice.price,
+        });
+      }
     }
 
-    let cartTotal = 0;
-    for (let i = 0; i < products.length; i++) {
-      cartTotal = cartTotal + products[i].price * products[i].count;
-    }
+    // Calculate the cart total
+    let cartTotal = existingCart.products.reduce((total, product) => {
+      return total + product.price * product.count;
+    }, 0);
 
-    let newCart = await new Cart({
-      products,
-      cartTotal,
-      orderby: user?._id,
-    }).save();
+    existingCart.cartTotal = cartTotal;
 
-    res.json(newCart);
+    await existingCart.save();
+
+    res.json(existingCart);
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the cart.' });
   }
 };
 
