@@ -294,6 +294,7 @@ exports.deleteaUser = async (req, res) => {
   }
 };
 
+
 // const blockUser = asyncHandler(async (req, res) => {
 //   const { id } = req.params;
 //   validateMongoDbId(id);
@@ -336,28 +337,6 @@ exports.deleteaUser = async (req, res) => {
 //   }
 // });
 
-exports.updatePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword , _id} = req.body;
-    // const { _id } = req.user;
-    console.log(_id);
-    const user = await User.findById(_id).select("+password");
-    // Verify the current password
-    const isPasswordMatch = await user.matchPasswords(currentPassword);
-    if (!isPasswordMatch) {
-      return res.status(401).json({ message: "Current password is incorrect" });
-    }
-
-    user.password = newPassword;
-    user.passwordChangedAt = Date.now();
-    await user.save();
-
-    res.status(200).json({ message: "Password changed successfully" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Password change failed" });
-  }
-};
 
 // const forgotPasswordToken = async (req, res) => {
 //   const { email } = req.body;
@@ -396,6 +375,31 @@ exports.updatePassword = async (req, res) => {
 //   res.json(user);
 // };
 
+
+exports.updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword , _id} = req.body;
+    // const { _id } = req.user;
+    console.log(_id);
+    const user = await User.findById(_id).select("+password");
+    // Verify the current password
+    const isPasswordMatch = await user.matchPasswords(currentPassword);
+    if (!isPasswordMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    user.password = newPassword;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Password change failed" });
+  }
+};
+
+// Get Wishlist
 exports.getWishlist = async (req, res) => {
   const { _id } = req.body;
 
@@ -412,7 +416,6 @@ exports.getWishlist = async (req, res) => {
   }
 };
 
-// Add to CART
 // Add to CART
 exports.userCart = async (req, res) => {
   const { cart, _id } = req.body;
@@ -472,6 +475,7 @@ exports.userCart = async (req, res) => {
   }
 };
 
+// Get Cart 
 exports.getUserCart = async (req, res) => {
   const { _id } = req.body;
   validateMongoDbId(_id);
@@ -485,6 +489,7 @@ exports.getUserCart = async (req, res) => {
   }
 };
 
+// Empty Whole Cart
 exports.emptyCart = async (req, res) => {
   const { _id } = req.body;
   validateMongoDbId(_id);
@@ -494,6 +499,55 @@ exports.emptyCart = async (req, res) => {
     res.json(cart);
   } catch (error) {
     throw new Error(error);
+  }
+};
+
+// Remove a single quantity of a product from the user's cart
+exports.removeFromCart = async (req, res) => {
+  const { userId, productId } = req.body;
+  validateMongoDbId(userId);
+  validateMongoDbId(productId);
+
+  try {
+    // Find the user's cart
+    const cart = await Cart.findOne({ orderby: userId });
+
+    if (!cart) {
+      return res.status(404).json({ error: 'Cart not found' });
+    }
+
+    // Find the product in the cart
+    const product = cart.products.find(
+      (product) => product.product.toString() === productId
+    );
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found in the cart' });
+    }
+
+    // If the product has a count greater than 1, decrease the count by 1
+    if (product.count > 1) {
+      product.count--;
+    } else {
+      // If the product count is 1, remove the entire product from the cart
+      cart.products = cart.products.filter(
+        (product) => product.product.toString() !== productId
+      );
+    }
+
+    // Recalculate the cart total
+    const cartTotal = cart.products.reduce((total, product) => {
+      return total + product.price * product.count;
+    }, 0);
+
+    cart.cartTotal = cartTotal;
+
+    await cart.save();
+
+    res.json(cart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the cart.' });
   }
 };
 

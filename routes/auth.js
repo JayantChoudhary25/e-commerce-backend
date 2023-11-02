@@ -22,6 +22,7 @@ const {
   userCart,
   getUserCart,
   emptyCart,
+  removeFromCart,
 //   applyCoupon,
   createOrder,
   getOrders,
@@ -70,6 +71,8 @@ router
   .post( getaUser);
 
 router.delete("/empty-cart", emptyCart);
+
+router.post("/remove-cart", removeFromCart);
 
 router.delete("/deleteaUser/:id", deleteaUser);
 
