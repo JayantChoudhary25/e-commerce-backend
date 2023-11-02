@@ -398,17 +398,21 @@ exports.updatePassword = async (req, res) => {
 
 exports.getWishlist = async (req, res) => {
   const { _id } = req.body;
-  // console.log(_id);
+
   try {
-    const findUser = await User.findById(_id).populate("wishlist");
-    console.log(findUser);
+    const findUser = await User.findOne({ _id }).populate("wishlist");
+    if (!findUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     res.json(findUser);
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the wishlist.' });
   }
 };
 
-// CART
+// Add to CART
 exports.userCart = async (req, res) => {
   const { cart, _id } = req.body;
   validateMongoDbId(_id);
@@ -448,7 +452,6 @@ exports.userCart = async (req, res) => {
     throw new Error(error);
   }
 };
-
 
 exports.getUserCart = async (req, res) => {
   const { _id } = req.body;
