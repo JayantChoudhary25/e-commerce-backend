@@ -246,8 +246,21 @@ exports.saveAddress = async (req, res, next) => {
 
 exports.getallUser = async (req, res) => {
   try {
-    const getUsers = await User.find().populate("wishlist");
-    res.json(getUsers);
+    const searchQuery = req.query.search;
+
+    const userQuery = User.find();
+
+    if (searchQuery) {
+      userQuery.or([
+        { firstname: { $regex: new RegExp(searchQuery, "i") } },
+        { lastname: { $regex: new RegExp(searchQuery, "i") } },
+        { email: { $regex: new RegExp(searchQuery, "i") } },
+        { mobile: { $regex: new RegExp(searchQuery, "i") } },
+      ]);
+    }
+
+    const users = await userQuery.populate("wishlist").exec();
+    res.json(users);
   } catch (error) {
     throw new Error(error);
   }
