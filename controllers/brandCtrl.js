@@ -58,14 +58,6 @@ exports.getBrand = async (req, res) => {
 
 exports.getallBrand = async (req, res) => {
   try {
-    const getallBrand = await Brand.find();
-    res.json(getallBrand);
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-exports.getallBrand = async (req, res) => {
-  try {
     const searchQuery = req.query.search; // Get the search query from the request query parameters
 
     // Create a Mongoose query to search for brands
