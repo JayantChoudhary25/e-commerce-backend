@@ -31,18 +31,37 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-exports.isAuthenticatedUser = async (req, res, next) => {
-  const { token } = req.cookies;
+// exports.isAuthenticatedUser = async (req, res, next) => {
+//   const { token } = req.cookies;
 
-  if (!token) {
+//   if (!token) {
+//     return next(new ErrorResponse("Please Login to access this resource", 401));
+//   }
+
+//   const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+
+//   req.user = await User.findById(decodedData.id);
+
+//   next();
+// };
+
+exports.isAuthenticatedUser = async (req, res, next) => {
+  const authorizationHeader = req.headers.Authorization;
+
+  if (!authorizationHeader) {
     return next(new ErrorResponse("Please Login to access this resource", 401));
   }
 
-  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+  // Extract the token from the Authorization header
+  const token = authorizationHeader; // Assuming it's a Bearer token
 
-  req.user = await User.findById(decodedData.id);
-
-  next();
+  try {
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decodedData.id);
+    next();
+  } catch (error) {
+    return next(new ErrorResponse("Token is invalid", 401));
+  }
 };
 
 exports.authorizeRoles = (...roles) => {
