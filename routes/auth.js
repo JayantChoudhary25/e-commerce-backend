@@ -68,7 +68,7 @@ router.post("/getUserCart", getUserCart);
 // router.get("/getaUser", isAuthenticatedUser, getaUser);
 router
   .route("/getaUser")
-  .post( getaUser);
+  .get(isAuthenticatedUser, getaUser);
 
 router.delete("/empty-cart", emptyCart);
 
