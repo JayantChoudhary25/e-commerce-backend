@@ -36,6 +36,9 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    currencyName: {
+      type: String
+    },
     sold: {
       type: Number,
       default: 0,
