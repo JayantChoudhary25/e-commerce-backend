@@ -46,7 +46,7 @@ exports.protect = async (req, res, next) => {
 // };
 
 exports.isAuthenticatedUser = async (req, res, next) => {
-  const authorizationHeader = req.headers.Authorization;
+  const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader) {
     return next(new ErrorResponse("Please Login to access this resource", 401));
