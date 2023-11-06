@@ -4,26 +4,26 @@ const asyncHandler = require("express-async-handler");
 const ErrorResponse = require("../utils/errorRes");
 const slugify = require("slugify");
 const validateMongoDbId = require("../utils/validateMongodbId");
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
 
 exports.createProduct = async (req, res) => {
-  try {
-    const existingProduct = await Product.findOne(
-      { title: { $regex: new RegExp(req.body.title, "i") } }
-    );    
+    try {
+      const existingProduct = await Product.findOne(
+        { title: { $regex: new RegExp(req.body.title, "i") } }
+      );    
 
-    if (existingProduct) {
-      return res.status(400).json({ error: "Product with the same title already exists" });
-    }
+      if (existingProduct) {
+        return res.status(400).json({ error: "Product with the same title already exists" });
+      }
 
-    if (req.body.title) {
-      req.body.slug = slugify(req.body.title);
+      if (req.body.title) {
+        req.body.slug = slugify(req.body.title);
+      }
+      const newProduct = await Product.create(req.body);
+      res.json(newProduct);
+    } catch (error) {
+      return res.status(400).json({ error });
     }
-    const newProduct = await Product.create(req.body);
-    res.json(newProduct);
-  } catch (error) {
-    return res.status(400).json({ error });
-  }
 };
 
 exports.updateProduct = async (req, res) => {
