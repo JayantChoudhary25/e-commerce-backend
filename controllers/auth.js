@@ -418,7 +418,8 @@ exports.getWishlist = async (req, res) => {
 
 // Add to CART
 exports.userCart = async (req, res) => {
-  const { cart, _id } = req.body;
+  const { cart } = req.body;
+  const {_id} = req.user;
   validateMongoDbId(_id);
 
   try {
