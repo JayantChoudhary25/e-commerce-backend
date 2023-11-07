@@ -478,10 +478,11 @@ exports.userCart = async (req, res) => {
 
 // Get Cart 
 exports.getUserCart = async (req, res) => {
-  const { _id } = req.user;
-  validateMongoDbId(_id);
+  const { id } = req.user;
+  console.log(id);
+  validateMongoDbId(id);
   try {
-    const cart = await Cart.findOne({ orderby: _id }).populate(
+    const cart = await Cart.findOne({ orderby: id }).populate(
       "products.product"
     );
     res.json(cart);
