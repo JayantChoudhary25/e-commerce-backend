@@ -50,7 +50,7 @@ router.post("/cart", isAuthenticatedUser, userCart);
 
 router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 
-router.get("/all-users", isAuthenticatedUser, authorizeRoles("admin"), getallUser);
+router.get("/all-users",  getallUser);
 
 router.route("/getaUser").get(isAuthenticatedUser, getaUser);
 
