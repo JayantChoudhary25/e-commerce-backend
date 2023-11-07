@@ -105,7 +105,7 @@ router.post("/upload", upload.array("images", 5), (req, res) => {
 
   // You can save these image URLs to your product model or perform other actions as needed
 
-  resres.status(200).json({ imageUrls });
+  res.status(200).json({ imageUrls });
 });
 
 module.exports = router;
