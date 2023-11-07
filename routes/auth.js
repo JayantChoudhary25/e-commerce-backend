@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const upload = require("../utils/uploadImage"); // Import the upload middleware
 const {
   register,
   login,
@@ -91,5 +91,21 @@ router.get("/wishlist", isAuthenticatedUser, getWishlist);
 // router.put("/block-user/:id", isAuthenticatedUser, authorizeRoles("admin"), blockUser);
 
 // router.put("/unblock-user/:id", isAuthenticatedUser, authorizeRoles("admin"), unblockUser);
+
+// Uploading images
+router.post("/upload", upload.array("images", 5), (req, res) => {
+
+  // Check if files were uploaded successfully
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ error: "No files uploaded." });
+  }
+
+  // Get the uploaded image URLs from Cloudinary
+  const imageUrls = req.files.map((file) => file.path);
+
+  // You can save these image URLs to your product model or perform other actions as needed
+
+  resres.status(200).json({ imageUrls });
+});
 
 module.exports = router;

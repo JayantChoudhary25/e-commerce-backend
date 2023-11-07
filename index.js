@@ -48,6 +48,7 @@ app.use("/api/category", require("./routes/prodCategory"));
 app.use("/api/brand", require("./routes/brand"));
 app.use("/api/vendor", require("./routes/vendor"));
 app.use("/api/currency", require("./routes/currency"));
+app.use("/api/auth/upload", require("./routes/auth"));
 
 // Error Handler 
 app.use(errorHandler);
