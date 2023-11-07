@@ -401,7 +401,7 @@ exports.updatePassword = async (req, res) => {
 
 // Get Wishlist
 exports.getWishlist = async (req, res) => {
-  const { _id } = req.body;
+  const { _id } = req.user;
 
   try {
     const findUser = await User.findOne({ _id }).populate("wishlist");
