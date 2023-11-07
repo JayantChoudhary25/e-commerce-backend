@@ -478,16 +478,21 @@ exports.userCart = async (req, res) => {
 
 // Get Cart 
 exports.getUserCart = async (req, res) => {
-  const { id } = req.user;
-  console.log(id);
-  validateMongoDbId(id);
+
+  const userId = req.user._id;
+  console.log("IDDDDDDDDDDDDDD:-",userId);
+  validateMongoDbId(userId);
   try {
-    const cart = await Cart.findOne({ orderby: id }).populate(
+    const cart = await Cart.findOne({ orderby: userId }).populate(
       "products.product"
     );
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found for this user' });
+    }
     res.json(cart);
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 

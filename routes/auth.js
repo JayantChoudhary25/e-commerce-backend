@@ -45,11 +45,14 @@ router.route("/forgotpassword").post(forgotPassword);
 
 router.route("/resetpassword/:resetToken").put(resetPassword);
 
+// Add to CART
 router.post("/cart",  userCart);
 
 router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 
 router.get("/all-users", getallUser);
+
+router.route("/getaUser").get(isAuthenticatedUser, getaUser);
 
 router.get("/get-orders", isAuthenticatedUser, getOrders);
 
@@ -57,15 +60,11 @@ router.get("/getallorders", isAuthenticatedUser, authorizeRoles("admin"), getAll
 
 router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
 
-// router.get("/wishlist", isAuthenticatedUser, getWishlist);
-
+// Get Wishlist
 router.get("/wishlist", isAuthenticatedUser, getWishlist);
 
+// Get User Cart 
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);
-
-router
-  .route("/getaUser")
-  .get(isAuthenticatedUser, getaUser);
 
 router.delete("/empty-cart", emptyCart);
 
@@ -76,8 +75,6 @@ router.delete("/deleteaUser/:id", deleteaUser);
 router.put( "/order/update-order/:id", isAuthenticatedUser, authorizeRoles("admin"), updateOrderStatus );
 
 router.put("/edit-user", isAuthenticatedUser, updatedUser);
-
-// router.put("/save-address", isAuthenticatedUser, saveAddress);
 
 router.put("/save-address", saveAddress);
 

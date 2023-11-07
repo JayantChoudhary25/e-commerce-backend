@@ -16,8 +16,8 @@ router.route("/getProductsByVendor/:vendorId").get(getProductsByVendor);
 router.route("/updateProductVendor/:productId").post(updateProductVendor)
 
 router.route("/rating").post(isAuthenticatedUser, rating);
-// router.route("/addToWishlist").post(isAuthenticatedUser, addToWishlist);
 
+// Add to Wishlist
 router.route("/addToWishlist").post(addToWishlist);
 
 module.exports = router;

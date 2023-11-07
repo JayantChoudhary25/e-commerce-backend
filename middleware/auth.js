@@ -53,11 +53,18 @@ exports.isAuthenticatedUser = async (req, res, next) => {
   }
 
   // Extract the token from the Authorization header
-  const token = authorizationHeader; // Assuming it's a Bearer token
+  const token = authorizationHeader; 
 
   try {
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decodedData.id);
+
+    const user = await User.findById(decodedData.id);
+
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    req.user = user;
     next();
   } catch (error) {
     return next(new ErrorResponse("Token is invalid", 401));
