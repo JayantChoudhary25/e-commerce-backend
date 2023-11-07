@@ -39,7 +39,7 @@ router.route("/adminLogin").post(adminLogin);
 
 router.route("/logout").get(logout);
 
-router.post("/updatePassword", updatePassword)
+router.post("/updatePassword", isAuthenticatedUser, updatePassword)
 
 router.route("/forgotpassword").post(forgotPassword);
 
@@ -50,7 +50,7 @@ router.post("/cart", isAuthenticatedUser, userCart);
 
 router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 
-router.get("/all-users", getallUser);
+router.get("/all-users", isAuthenticatedUser, authorizeRoles("admin"), getallUser);
 
 router.route("/getaUser").get(isAuthenticatedUser, getaUser);
 

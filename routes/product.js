@@ -18,6 +18,6 @@ router.route("/updateProductVendor/:productId").post(updateProductVendor)
 router.route("/rating").post(isAuthenticatedUser, rating);
 
 // Add to Wishlist
-router.route("/addToWishlist").post(addToWishlist);
+router.route("/addToWishlist").post( isAuthenticatedUser, addToWishlist);
 
 module.exports = router;
