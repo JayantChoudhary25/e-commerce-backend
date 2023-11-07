@@ -420,7 +420,7 @@ exports.getWishlist = async (req, res) => {
 exports.userCart = async (req, res) => {
   const { cart } = req.body;
   const { userId } = req.user._id;
-  validateMongoDbId(_id);
+  validateMongoDbId(userId);
 
   try {
     const user = await User.findById({_id: userId});
