@@ -419,11 +419,10 @@ exports.getWishlist = async (req, res) => {
 // Add to CART
 exports.userCart = async (req, res) => {
   const { cart } = req.body;
-  const { userId } = req.user._id;
-  validateMongoDbId(userId);
+  const {_id} = req.user._id;
 
   try {
-    const user = await User.findById({_id: userId});
+    const user = await User.findById(_id);
 
     // Fetch the user's existing cart or create a new one if it doesn't exist
     let existingCart = await Cart.findOne({ orderby: user._id });
