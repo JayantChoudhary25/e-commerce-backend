@@ -33,8 +33,8 @@ exports.getAllVendors = async (req, res) => {
 
     if (searchQuery) {
       brandQuery.regex("vendorName", new RegExp(searchQuery, "i"));
-      brandQuery.regex("companyName", new RegExp(searchQuery, "i"));
-      brandQuery.regex("email", new RegExp(searchQuery, "i"));
+      // brandQuery.regex("companyName", new RegExp(searchQuery, "i"));
+      // brandQuery.regex("email", new RegExp(searchQuery, "i"));
     }
 
     const vendors = await brandQuery.exec();
