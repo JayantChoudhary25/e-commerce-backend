@@ -4,6 +4,7 @@ const router = express.Router();
 const { createProduct, updateProduct, deleteProduct, deleteBulkProducts, getAllProduct, getProductsByVendor,updateProductVendor,getaProduct, rating, addToWishlist} = require("../controllers/prodCtrl");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 // isAuthenticatedUser, authorizeRoles("admin"),
+
 router.route("/createProduct").post( createProduct);
 router.route("/updateProduct/:id").put( updateProduct);
 router.route("/deleteProduct/:id").delete( deleteProduct);
