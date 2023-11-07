@@ -225,7 +225,7 @@ exports.updatedUser = async (req, res) => {
 
 // save user Address
 exports.saveAddress = async (req, res, next) => {
-  const { _id } = req.user;
+  const { _id } = req.user._id;
   validateMongoDbId(_id);
 
   try {
@@ -378,9 +378,9 @@ exports.deleteaUser = async (req, res) => {
 
 exports.updatePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword , _id} = req.body;
-    // const { _id } = req.user;
-    console.log(_id);
+    const { currentPassword, newPassword } = req.body;
+    const { _id } = req.use._id;
+
     const user = await User.findById(_id).select("+password");
     // Verify the current password
     const isPasswordMatch = await user.matchPasswords(currentPassword);
@@ -477,9 +477,7 @@ exports.userCart = async (req, res) => {
 
 // Get Cart 
 exports.getUserCart = async (req, res) => {
-
   const userId = req.user._id;
-  console.log("IDDDDDDDDDDDDDD:-",userId);
   validateMongoDbId(userId);
   try {
     const cart = await Cart.findOne({ orderby: userId }).populate(

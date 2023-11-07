@@ -26,7 +26,7 @@ const {
 //   applyCoupon,
   // createOrder,
   // getOrders,
-  updateOrderStatus,
+  //updateOrderStatus,
   //getAllOrders,
 } = require("../controllers/auth");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
