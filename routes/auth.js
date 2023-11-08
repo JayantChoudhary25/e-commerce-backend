@@ -72,7 +72,7 @@ router.post("/addToCart", addToCart);
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);
 
 // Empty Whole Cart
-router.delete("/empty-cart", emptyCart);
+router.delete("/empty-cart",isAuthenticatedUser, emptyCart);
 
 // Remove a single quantity of a product from the user's cart
 router.post("/remove-cart", isAuthenticatedUser ,removeFromCart);

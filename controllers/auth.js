@@ -554,7 +554,7 @@ exports.getUserCart = async (req, res) => {
 
 // Empty Whole Cart
 exports.emptyCart = async (req, res) => {
-  const { _id } = req.body;
+  const { _id } = req.user._id;
   validateMongoDbId(_id);
   try {
     const user = await User.findOne({ _id });
