@@ -51,6 +51,7 @@ exports.isAuthenticatedUser = async (req, res, next) => {
     }
 
     req.user = user;
+    console.log(user.email);
     next();
   } catch (error) {
     return next(new ErrorResponse("Token is invalid", 401));
