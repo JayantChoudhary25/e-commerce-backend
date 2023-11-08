@@ -569,8 +569,6 @@ exports.emptyCart = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   const {  productId } = req.body;
   const { userId } = req.user._id;
-  validateMongoDbId(userId);
-  validateMongoDbId(productId);
 
   try {
     // Find the user's cart
