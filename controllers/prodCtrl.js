@@ -200,6 +200,30 @@ exports.addToWishlist = async (req, res) => {
     }
 };
 
+exports.deleteAllWishlistItems = async (req, res) => {
+  const { _id } = req.user._id;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Clear the user's wishlist by setting it to an empty array
+    user.wishlist = [];
+
+    // Save the user to update the wishlist
+    await user.save();
+
+    res.json({ message: "All wishlist items deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while deleting wishlist items" });
+  }
+};
+
 exports.rating = async (req, res) => {
   const { _id } = req.user;
   const { star, prodId, comment } = req.body;

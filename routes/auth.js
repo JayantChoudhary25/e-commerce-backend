@@ -23,6 +23,7 @@ const {
   getUserCart,
   emptyCart,
   removeFromCart,
+  addToCart
 //   applyCoupon,
   // createOrder,
   // getOrders,
@@ -63,6 +64,9 @@ router.route("/resetpassword/:resetToken").put(resetPassword);
 
 // Add to CART
 router.post("/cart", isAuthenticatedUser, userCart);
+
+// Add to CART without login
+router.post("/addToCart", addToCart);
 
 // Get User Cart 
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);

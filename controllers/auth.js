@@ -475,6 +475,65 @@ exports.userCart = async (req, res) => {
   }
 };
 
+// Add to Cart without login
+exports.addToCart = async (req, res) => {
+  const { productId, count, color } = req.body;
+
+  try {
+    // Fetch the product details
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Retrieve the temporary cart from the session or a temporary identifier
+    const tempCart = req.session.tempCart || req.cookies.tempCart;
+
+    // If a temporary cart does not exist, create a new one
+    if (!tempCart) {
+      const newCart = new Cart({ products: [] });
+      await newCart.save();
+      req.session.tempCart = newCart._id;
+      res.cookie("tempCart", newCart._id, {
+        maxAge: 604800000, // Set the cookie expiration time (7 days)
+      });
+      tempCart = newCart._id;
+    }
+
+    // Check if the product is already in the cart
+    const existingProduct = tempCart.products.find(
+      (item) => item.product.toString() === productId
+    );
+
+    if (existingProduct) {
+      // If the product is in the cart, update the quantity
+      existingProduct.count += count;
+    } else {
+      // If the product is not in the cart, add it
+      tempCart.products.push({
+        product: productId,
+        count,
+        color,
+        price: product.price,
+      });
+    }
+
+    // Calculate the cart total
+    tempCart.cartTotal = tempCart.products.reduce(
+      (total, item) => total + item.price * item.count,
+      0
+    );
+
+    await tempCart.save();
+
+    res.json(tempCart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while adding to the cart" });
+  }
+};
+
 // Get Cart 
 exports.getUserCart = async (req, res) => {
   const userId = req.user._id;
