@@ -488,7 +488,7 @@ exports.addToCart = async (req, res) => {
     }
 
     // Retrieve the temporary cart from the session or a temporary identifier
-    const tempCart = req.session.tempCart || req.cookies.tempCart;
+    let tempCart = req.session.tempCart || req.cookies.tempCart;
 
     // If a temporary cart does not exist, create a new one
     if (!tempCart) {
@@ -498,7 +498,7 @@ exports.addToCart = async (req, res) => {
       res.cookie("tempCart", newCart._id, {
         maxAge: 604800000, // Set the cookie expiration time (7 days)
       });
-      tempCart = newCart._id;
+      tempCart = newCart; // Update tempCart to reference the new cart
     }
 
     // Check if the product is already in the cart
