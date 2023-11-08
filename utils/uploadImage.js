@@ -15,6 +15,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "product-images", // Specify the folder where images will be stored
     allowed_formats: ["jpg", "png", "jpeg"],
+    transformation: [{ width: 400, height: 300, crop: "limit" }],
   },
 });
 
