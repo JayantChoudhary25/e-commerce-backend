@@ -477,7 +477,7 @@ exports.userCart = async (req, res) => {
 
 // Add to Cart without login
 exports.addToCart = async (req, res) => {
-  const { productId, count, color } = req.body;
+  var { productId, count, color } = req.body;
 
   try {
     // Fetch the product details
