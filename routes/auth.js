@@ -71,7 +71,7 @@ router.get("/getUserCart", isAuthenticatedUser, getUserCart);
 router.delete("/empty-cart", emptyCart);
 
 // Remove a single quantity of a product from the user's cart
-router.post("/remove-cart", removeFromCart);
+router.post("/remove-cart", isAuthenticatedUser ,removeFromCart);
 
 
 // Get Wishlist

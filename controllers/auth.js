@@ -508,7 +508,8 @@ exports.emptyCart = async (req, res) => {
 
 // Remove a single quantity of a product from the user's cart
 exports.removeFromCart = async (req, res) => {
-  const { userId, productId } = req.body;
+  const {  productId } = req.body;
+  const { userId } = req.user._id;
   validateMongoDbId(userId);
   validateMongoDbId(productId);
 
