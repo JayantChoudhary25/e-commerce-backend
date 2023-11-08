@@ -379,7 +379,7 @@ exports.deleteaUser = async (req, res) => {
 exports.updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const { _id } = req.use._id;
+    const { _id } = req.user._id;
 
     const user = await User.findById(_id).select("+password");
     // Verify the current password
