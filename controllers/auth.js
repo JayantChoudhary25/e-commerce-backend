@@ -500,10 +500,11 @@ exports.addToCart = async (req, res) => {
     }
 
     // Retrieve the temporary cart from the session or a temporary identifier
-    let tempCart = req.session.tempCart || req.cookies.tempCart;
+    let tempCartId = req.session.tempCart || req.cookies.tempCart;
+    let tempCart;
 
-    // If a temporary cart does not exist, create a new one
-    if (!tempCart) {
+    // If a temporary cart does not exist or is not found, create a new one
+    if (!tempCartId) {
       const newCart = new Cart({ products: [] });
       await newCart.save();
       req.session.tempCart = newCart._id;
@@ -511,6 +512,20 @@ exports.addToCart = async (req, res) => {
         maxAge: 604800000, // Set the cookie expiration time (7 days)
       });
       tempCart = newCart; // Update tempCart to reference the new cart
+    } else {
+      // If the temporary cart exists, retrieve it
+      tempCart = await Cart.findById(tempCartId);
+
+      if (!tempCart) {
+        // Create a new cart if the existing one is not found
+        const newCart = new Cart({ products: [] });
+        await newCart.save();
+        req.session.tempCart = newCart._id;
+        res.cookie("tempCart", newCart._id, {
+          maxAge: 604800000, // Set the cookie expiration time (7 days)
+        });
+        tempCart = newCart; // Update tempCart to reference the new cart
+      }
     }
 
     // Check if the product is already in the cart
@@ -627,6 +642,85 @@ exports.removeFromCart = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while removing the product from the cart' });
   }
 };
+
+// Add to cart without login
+const sessionCart = {};
+
+exports.toCart = (req, res) => {
+  const { productId, count, color } = req.body;
+
+  if (!productId || !count) {
+    return res.status(400).json({ error: 'Product ID and count are required.' });
+  }
+
+  let existingSessionCart = sessionCart[req.cookies.cartId] || [];
+  const existingProductIndex = existingSessionCart.findIndex((item) => item.productId === productId);
+
+  if (existingProductIndex !== -1) {
+    // If the product already exists in the cart, increase the count
+    existingSessionCart[existingProductIndex].count += count;
+  } else {
+    // If the product doesn't exist, add it to the cart
+    existingSessionCart.push({ productId, count, color });
+  }
+
+  // Calculate the cart total
+  const cartTotal = existingSessionCart.reduce((total, item) => {
+    // You would need to fetch the product price from your database
+    const productPrice = 10; // Replace with the actual price retrieval logic
+    return total + productPrice * item.count;
+  }, 0);
+
+  // Save the updated session cart
+  sessionCart[req.cookies.cartId] = existingSessionCart;
+
+  const cartId = generateRandomCode(8); // Implement this function to generate a unique cart ID
+  res.cookie('cartId', cartId, { maxAge: 3600000 });
+
+  // Save the cart total in the session
+  req.session.cartTotal = cartTotal;
+
+  res.json({ message: 'Product added to cart.' });
+};
+
+exports.getCart = async (req, res) => {
+  const cartId = req.session.cartId;
+  console.log(cartId);
+  
+  if (!cartId) {
+    return res.status(400).json({ error: 'Cart ID not found in session.' });
+  }
+
+  try {
+    // Retrieve the cart using the cartId
+    const tempCart = await Cart.findById(cartId);
+
+    if (!tempCart) {
+      return res.status(404).json({ error: 'Cart not found' });
+    }
+
+    // You may want to update cartTotal here if needed
+    // For example: tempCart.cartTotal = calculateTotal(tempCart.products);
+    
+    res.json({ cart: tempCart.products, cartTotal: tempCart.cartTotal });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the cart' });
+  }
+};
+
+
+function generateRandomCode(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters.charAt(randomIndex);
+  }
+
+  return code;
+}
 
 // exports.applyCoupon = async (req, res) => {
 //   const { coupon } = req.body;

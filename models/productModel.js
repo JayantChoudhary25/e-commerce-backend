@@ -66,6 +66,12 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Vendor',
     },
+    regPriceCurr: {
+      type: String
+    },
+    offerPriceCurr: {
+      type: String
+    }
   },
   { timestamps: true }
 );
