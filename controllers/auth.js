@@ -581,14 +581,32 @@ exports.getUserCart = async (req, res) => {
 
 // Empty Whole Cart
 exports.emptyCart = async (req, res) => {
-  const { _id } = req.user._id;
-  validateMongoDbId(_id);
+  const userId = req.user._id;
+  validateMongoDbId(userId);
+
   try {
-    const user = await User.findOne({ _id });
-    const cart = await Cart.findOneAndRemove({ orderby: user._id });
-    res.json(cart);
+    // Find the user
+    const user = await User.findById(userId);
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Clear the user's cart
+    user.cart = [];
+    user.cartTotal = 0;
+
+    // Save the user document with the empty cart
+    await user.save();
+
+    // Remove the entire cart from the Cart document
+    const cart = await Cart.findOneAndRemove({ orderby: userId });
+
+    res.json({ message: 'Cart emptied successfully' });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
