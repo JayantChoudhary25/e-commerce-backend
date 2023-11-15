@@ -45,11 +45,11 @@ exports.getAllVendors = async (req, res) => {
 };
 
 exports.getaVendor = async (req, res) => {
-  const { _id } = req.body;
-  validateMongoDbId(_id);
+  const { id } = req.body;
+  validateMongoDbId(id);
 
   try {
-    const result = await Vendor.findById(_id);
+    const result = await Vendor.findById(id);
     res.json({
       result,
     });
