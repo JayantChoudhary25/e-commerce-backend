@@ -166,38 +166,61 @@ exports.updateProductVendor = async (req, res) => {
   res.json(product);
 };
 
+// exports.addToWishlist = async (req, res) => {
+//     const { prodId } = req.body;
+//     const { _id } = req.user._id;
+//     try {
+//       const user = await User.findById(_id);
+//       const alreadyadded = user.wishlist.find((id) => id.toString() === prodId);
+//       if (alreadyadded) {
+//         let user = await User.findByIdAndUpdate(
+//           _id,
+//           {
+//             $pull: { wishlist: prodId },
+//           },
+//           {
+//             new: true,
+//           }
+//         );
+//         res.json(user);
+//       } else {
+//         let user = await User.findByIdAndUpdate(
+//           _id,
+//           {
+//             $push: { wishlist: prodId },
+//           },
+//           {
+//             new: true,
+//           }
+//         );
+//         res.json(user);
+//       }
+//     } catch (error) {
+//       throw new Error(error);
+//     }
+// };
+
 exports.addToWishlist = async (req, res) => {
-    const { prodId } = req.body;
-    const { _id } = req.user._id;
-    try {
-      const user = await User.findById(_id);
-      const alreadyadded = user.wishlist.find((id) => id.toString() === prodId);
-      if (alreadyadded) {
-        let user = await User.findByIdAndUpdate(
-          _id,
-          {
-            $pull: { wishlist: prodId },
-          },
-          {
-            new: true,
-          }
-        );
-        res.json(user);
-      } else {
-        let user = await User.findByIdAndUpdate(
-          _id,
-          {
-            $push: { wishlist: prodId },
-          },
-          {
-            new: true,
-          }
-        );
-        res.json(user);
-      }
-    } catch (error) {
-      throw new Error(error);
+  const { prodId } = req.body;
+  const { _id } = req.user._id;
+  try {
+    const user = await User.findById(_id);
+    const alreadyadded = user.wishlist.find((id) => id.toString() === prodId);
+    if (alreadyadded) {
+      // Remove the product from the wishlist
+      user.wishlist = user.wishlist.filter(id => id.toString() !== prodId);
+      await user.save();
+      res.json({ message: 'Product removed from wishlist', wishlist: user.wishlist });
+    } else {
+      // Add the product to the wishlist
+      user.wishlist.push(prodId);
+      await user.save();
+      res.json({ message: 'Product added to wishlist', wishlist: user.wishlist });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the wishlist' });
+  }
 };
 
 exports.deleteAllWishlistItems = async (req, res) => {
