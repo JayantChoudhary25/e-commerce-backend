@@ -46,7 +46,7 @@ exports.deleteBulkBrands = async (req, res) => {
 };
 
 exports.getBrand = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.body;
   validateMongoDbId(id);
   try {
     const getaBrand = await Brand.findById(id);

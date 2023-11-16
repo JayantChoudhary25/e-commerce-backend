@@ -12,7 +12,7 @@ router.delete("/deleteBrand/:id",  deleteBrand);
 
 router.post("/deleteBulkBrands",  deleteBulkBrands);
 
-router.get("/getBrand/:id", getBrand);
+router.post("/getBrand", getBrand);
 
 router.get("/getallBrand", getallBrand);
 

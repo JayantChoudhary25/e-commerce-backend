@@ -43,3 +43,17 @@ exports.getColors = async (req, res) => {
     throw new Error(error);
   }
 };
+
+exports.getaColor = async (req, res) => {
+  const { id } = req.body;
+  validateMongoDbId(id);
+
+  try {
+    const result = await Color.findById(id);
+    res.json({
+      result,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};

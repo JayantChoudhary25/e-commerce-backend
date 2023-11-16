@@ -46,7 +46,7 @@ exports.deleteBulkCategory = async (req, res) => {
 };
 
 exports.getCategory = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.body;
   validateMongoDbId(id);
   try {
     const getaCategory = await Category.findById(id);

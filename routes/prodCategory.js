@@ -12,7 +12,7 @@ router.delete("/deleteCategory/:id",  deleteCategory);
 
 router.post("/deleteBulkCategory",  deleteBulkCategory);
 
-router.get("/getCategory/:id", getCategory);
+router.post("/getCategory", getCategory);
 
 router.get("/getallCategory", getallCategory);
 
