@@ -570,12 +570,12 @@ exports.getUserCart = async (req, res) => {
       "products.product"
     );
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found for this user' });
+      return res.status(404).json({ message: "Cart not found for this user" });
     }
-    res.json(cart);
+    res.status(200).json({ message: "Cart retrieved successfully.", cart });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
