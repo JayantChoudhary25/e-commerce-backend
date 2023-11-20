@@ -280,6 +280,20 @@ exports.getaUser = async (req, res) => {
   }
 };
 
+exports.getUserById = async (req, res) => {
+  const { _id } = req.body;
+  validateMongoDbId(_id);
+
+  try {
+    const user = await User.findById(_id);
+    res.status(200).json({
+      user,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 exports.deleteaUser = async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);

@@ -11,6 +11,7 @@ const {
 //   handleRefreshToken,
   getallUser,
   getaUser,
+  getUserById,
   deleteaUser,
   updatedUser,
 //   blockUser,
@@ -54,6 +55,9 @@ router.get("/all-users",  getallUser);
 
 // Get a User
 router.route("/getaUser").get(isAuthenticatedUser, getaUser);
+
+// Get user by ID 
+router.route("/getUserById").post(isAuthenticatedUser, getUserById);
 
 // Delete a user
 router.delete("/deleteaUser/:id", deleteaUser);
