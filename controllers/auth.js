@@ -197,7 +197,7 @@ exports.handleRefreshToken = async (req, res) => {
 };
 
 exports.updatedUser = async (req, res) => {
-  const { _id } = req.user._id;
+  const { _id } = req.body;
   validateMongoDbId(_id);
 
   try {
