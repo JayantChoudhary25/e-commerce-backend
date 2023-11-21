@@ -780,20 +780,15 @@ function generateRandomCode(length) {
 // };
 
 exports.createOrder = async (req, res) => {
-  const { COD, couponApplied } = req.body;
-  const { _id } = req.user;
+  const { COD } = req.body;
+  const { _id } = req.user._id;
   validateMongoDbId(_id);
   try {
     if (!COD) throw new Error("Create cash order failed");
     const user = await User.findById(_id);
     let userCart = await Cart.findOne({ orderby: user._id });
-    let finalAmout = 0;
-    if (couponApplied && userCart.totalAfterDiscount) {
-      finalAmout = userCart.totalAfterDiscount;
-    } else {
-      finalAmout = userCart.cartTotal;
-    }
-
+    let finalAmout = userCart.cartTotal; // Use cartTotal directly without checking for couponApplied
+    
     let newOrder = await new Order({
       products: userCart.products,
       paymentIntent: {
@@ -807,6 +802,7 @@ exports.createOrder = async (req, res) => {
       orderby: user._id,
       orderStatus: "Cash on Delivery",
     }).save();
+    
     let update = userCart.products.map((item) => {
       return {
         updateOne: {
@@ -823,7 +819,7 @@ exports.createOrder = async (req, res) => {
 };
 
 exports.getOrders = async (req, res) => {
-  const { _id } = req.user;
+  const { _id } = req.user._id;
   validateMongoDbId(_id);
   try {
     const userorders = await Order.findOne({ orderby: _id })

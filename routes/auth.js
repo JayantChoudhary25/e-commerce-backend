@@ -26,12 +26,12 @@ const {
   removeFromCart,
   addToCart,
   toCart,
-  getCart
+  getCart,
 //   applyCoupon,
-  // createOrder,
-  // getOrders,
-  //updateOrderStatus,
-  //getAllOrders,
+  createOrder,
+  getOrders,
+  updateOrderStatus,
+  getAllOrders,
 } = require("../controllers/auth");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
@@ -94,9 +94,9 @@ router.post("/remove-cart", isAuthenticatedUser ,removeFromCart);
 router.get("/wishlist", isAuthenticatedUser, getWishlist);
 
 
-// router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
+router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 
-// router.get("/get-orders", isAuthenticatedUser, getOrders);
+router.get("/get-orders", isAuthenticatedUser, getOrders);
 
 // router.get("/getallorders", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
 
