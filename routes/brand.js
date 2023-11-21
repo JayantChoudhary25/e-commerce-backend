@@ -6,7 +6,7 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 router.post("/createBrand", createBrand);
 
-router.put("/updateBrand/:id",  updateBrand);
+router.put("/updateBrand",  updateBrand);
 
 router.delete("/deleteBrand/:id",  deleteBrand);
 

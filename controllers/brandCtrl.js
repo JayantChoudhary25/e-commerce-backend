@@ -12,10 +12,10 @@ exports.createBrand = async (req, res) => {
 };
 
 exports.updateBrand = async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
+  const { _id } = req.body;
+  validateMongoDbId(_id);
   try {
-    const updatedBrand = await Brand.findByIdAndUpdate(id, req.body, {
+    const updatedBrand = await Brand.findByIdAndUpdate(_id, req.body, {
       new: true,
     });
     res.json(updatedBrand);
