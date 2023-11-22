@@ -465,14 +465,14 @@ exports.userCart = async (req, res) => {
           product: product._id,
           count: product.count,
           color: product.color,
-          discountedPrice: getPrice.discountedPrice,
+          price: getPrice ? getPrice.discountedPrice : 0,
         });
       }
     }
 
     // Calculate the cart total
     let cartTotal = existingCart.reduce((total, product) => {
-      return total + product.discountedPrice * product.count;
+      return total + product.price * product.count;
     }, 0);
 
     user.cart = existingCart;
