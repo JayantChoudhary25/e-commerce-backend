@@ -166,40 +166,6 @@ exports.updateProductVendor = async (req, res) => {
   res.json(product);
 };
 
-// exports.addToWishlist = async (req, res) => {
-//     const { prodId } = req.body;
-//     const { _id } = req.user._id;
-//     try {
-//       const user = await User.findById(_id);
-//       const alreadyadded = user.wishlist.find((id) => id.toString() === prodId);
-//       if (alreadyadded) {
-//         let user = await User.findByIdAndUpdate(
-//           _id,
-//           {
-//             $pull: { wishlist: prodId },
-//           },
-//           {
-//             new: true,
-//           }
-//         );
-//         res.json(user);
-//       } else {
-//         let user = await User.findByIdAndUpdate(
-//           _id,
-//           {
-//             $push: { wishlist: prodId },
-//           },
-//           {
-//             new: true,
-//           }
-//         );
-//         res.json(user);
-//       }
-//     } catch (error) {
-//       throw new Error(error);
-//     }
-// };
-
 exports.addToWishlist = async (req, res) => {
   const { prodId } = req.body;
   const { _id } = req.user._id;
@@ -248,9 +214,19 @@ exports.deleteAllWishlistItems = async (req, res) => {
 };
 
 exports.rating = async (req, res) => {
-  const { _id } = req.user;
+  const { _id } = req.user._id;
   const { star, prodId, comment } = req.body;
   try {
+    // Check if the user has purchased the product
+    const user = await User.findById(_id).populate("orders");
+    const hasPurchased = user.orders.some((order) =>
+    order.products.some((orderProduct) => orderProduct.product.toString() === prodId)
+  );
+
+    if (!hasPurchased) {
+      return res.status(403).json({ error: "User has not purchased the product" });
+    }
+
     const product = await Product.findById(prodId);
     let alreadyRated = product.ratings.find(
       (userId) => userId.postedby.toString() === _id.toString()

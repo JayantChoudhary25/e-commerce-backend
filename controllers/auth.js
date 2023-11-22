@@ -823,6 +823,10 @@ exports.createOrder = async (req, res) => {
       };
     });
     const updated = await Product.bulkWrite(update, {});
+
+    // Save the order ID in the user's orders array
+    user.orders.push(newOrder._id);
+    
     // You might want to clear the user's cart after the order is created
     user.cart = [];
     user.cartTotal = 0;
