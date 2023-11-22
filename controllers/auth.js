@@ -645,6 +645,10 @@ exports.removeFromCart = async (req, res) => {
       return res.status(404).json({ error: 'Product not found in the cart' });
     }
 
+    // Get the price of the product being removed
+    const removedProduct = user.cart[productIndex];
+    const removedProductPrice = removedProduct.price * removedProduct.count;
+
     // Remove the product from the user's cart
     user.cart.splice(productIndex, 1);
 
@@ -653,7 +657,8 @@ exports.removeFromCart = async (req, res) => {
       return total + product.price * product.count;
     }, 0);
 
-    user.cartTotal = cartTotal;
+    // Subtract the removed product price from the cart total
+    user.cartTotal = cartTotal - removedProductPrice;
 
     // Save the user document
     await user.save();
