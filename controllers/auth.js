@@ -7,6 +7,7 @@ const sendEmail = require("../utils/sendEmail");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
+const uniqid = require('uniqid');
 const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
 const sendToken = require("../utils/jwtToken");
@@ -824,6 +825,7 @@ exports.createOrder = async (req, res) => {
     const updated = await Product.bulkWrite(update, {});
     res.json({ message: "success" });
   } catch (error) {
+    console.log("Error:",error);
     throw new Error(error);
   }
 };
