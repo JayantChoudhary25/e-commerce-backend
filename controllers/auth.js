@@ -459,20 +459,20 @@ exports.userCart = async (req, res) => {
         existingCart[existingProductIndex].count += product.count;
       } else {
         // If the product doesn't exist, add it to the cart
-        let getPrice = await Product.findById(product._id).select("price").exec();
+        let getPrice = await Product.findById(product._id).select("discountedPrice").exec();
 
         existingCart.push({
           product: product._id,
           count: product.count,
           color: product.color,
-          price: getPrice.price,
+          price: getPrice.discountedPrice,
         });
       }
     }
 
     // Calculate the cart total
     let cartTotal = existingCart.reduce((total, product) => {
-      return total + product.price * product.count;
+      return total + product.discountedPrice * product.count;
     }, 0);
 
     user.cart = existingCart;
