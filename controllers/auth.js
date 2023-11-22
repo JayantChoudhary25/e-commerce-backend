@@ -465,7 +465,7 @@ exports.userCart = async (req, res) => {
           product: product._id,
           count: product.count,
           color: product.color,
-          price: getPrice.discountedPrice,
+          discountedPrice: getPrice.discountedPrice,
         });
       }
     }
