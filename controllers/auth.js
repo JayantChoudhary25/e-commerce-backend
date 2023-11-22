@@ -799,7 +799,7 @@ exports.createOrder = async (req, res) => {
     const user = await User.findById(_id);
     let userCart = await Cart.findOne({ orderby: user._id });
     let finalAmout = userCart.cartTotal; // Use cartTotal directly without checking for couponApplied
-    
+
     let newOrder = await new Order({
       products: userCart.products,
       paymentIntent: {
@@ -813,7 +813,7 @@ exports.createOrder = async (req, res) => {
       orderby: user._id,
       orderStatus: "Cash on Delivery",
     }).save();
-    
+
     let update = userCart.products.map((item) => {
       return {
         updateOne: {
@@ -823,9 +823,17 @@ exports.createOrder = async (req, res) => {
       };
     });
     const updated = await Product.bulkWrite(update, {});
+    // You might want to clear the user's cart after the order is created
+    user.cart = [];
+    user.cartTotal = 0;
+    await user.save();
+
+    // You might also want to clear the user's cart in the Cart document
+    await Cart.findOneAndDelete({ orderby: user._id });
+
     res.json({ message: "success" });
   } catch (error) {
-    console.log("Error:",error);
+    console.log("Error:", error);
     throw new Error(error);
   }
 };
