@@ -670,6 +670,10 @@ exports.removeFromCart = async (req, res) => {
       const cartProductIndex = cartDocument.products.findIndex((item) => item.product.toString() === productId);
       if (cartProductIndex !== -1) {
         cartDocument.products.splice(cartProductIndex, 1);
+
+        // Update the cart total in the Cart document
+        cartDocument.cartTotal = cartTotal;
+        
         await cartDocument.save();
       }
     }
@@ -680,6 +684,7 @@ exports.removeFromCart = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while removing the product from the cart' });
   }
 };
+
 
 // Add to cart without login
 const sessionCart = {};
