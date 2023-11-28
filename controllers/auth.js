@@ -447,9 +447,12 @@ exports.userCart = async (req, res) => {
       let product = cart[i];
       let existingProductIndex = -1;
 
-      // Check if the same product already exists in the cart
+      // Check if the same product with the same color already exists in the cart
       for (let j = 0; j < existingCart.length; j++) {
-        if (existingCart[j].product.toString() === product._id.toString()) {
+        if (
+          existingCart[j].product.toString() === product._id.toString() &&
+          existingCart[j].color === product.color
+        ) {
           existingProductIndex = j;
           break;
         }
