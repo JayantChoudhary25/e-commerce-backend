@@ -98,7 +98,7 @@ router.post("/cart/cash-order", isAuthenticatedUser, createOrder);
 
 router.get("/get-orders", isAuthenticatedUser, getOrders);
 
-router.get("/getallorders", isAuthenticatedUser, getAllOrders); // authorizeRoles("admin"),
+router.get("/getallorders", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders); 
 
 router.put("/order/update-order", isAuthenticatedUser, updateOrderStatus);
 
