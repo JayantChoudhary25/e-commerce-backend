@@ -32,6 +32,7 @@ const {
   getOrders,
   updateOrderStatus,
   getAllOrders,
+  getOrderByUserId
 } = require("../controllers/auth");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
@@ -100,10 +101,9 @@ router.get("/get-orders", isAuthenticatedUser, getOrders);
 
 router.get("/getallorders", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders); 
 
-router.put("/order/update-order", isAuthenticatedUser, updateOrderStatus);
+router.put("/order/update-order", isAuthenticatedUser, authorizeRoles("admin"), updateOrderStatus);
 
-
-// router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
+router.post("/getorderbyuser", isAuthenticatedUser, authorizeRoles("admin"), getOrderByUserId);
 
 //router.put( "/order/update-order/:id", isAuthenticatedUser, authorizeRoles("admin"), updateOrderStatus );
 

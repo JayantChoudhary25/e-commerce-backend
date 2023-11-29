@@ -872,7 +872,7 @@ exports.getAllOrders = async (req, res) => {
 };
 
 exports.getOrderByUserId = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.body;
   validateMongoDbId(id);
   try {
     const userorders = await Order.findOne({ orderby: id })

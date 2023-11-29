@@ -27,6 +27,7 @@ const orderSchema = new mongoose.Schema(
     },
     expectedDelivery:{
       type: String,
+      default: "6 Days"
     },
     orderby: {
       type: mongoose.Schema.Types.ObjectId,
