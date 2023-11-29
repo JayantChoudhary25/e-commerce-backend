@@ -886,8 +886,7 @@ exports.getOrderByUserId = async (req, res) => {
 };
 
 exports.updateOrderStatus = async (req, res) => {
-  const { status } = req.body;
-  const { id } = req.params;
+  const { status , id } = req.body;
   validateMongoDbId(id);
   try {
     const updateOrderStatus = await Order.findByIdAndUpdate(

@@ -25,6 +25,9 @@ const orderSchema = new mongoose.Schema(
         "Delivered",
       ],
     },
+    expectedDelivery:{
+      type: String,
+    },
     orderby: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

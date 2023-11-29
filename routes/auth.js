@@ -100,6 +100,8 @@ router.get("/get-orders", isAuthenticatedUser, getOrders);
 
 router.get("/getallorders", isAuthenticatedUser, getAllOrders); // authorizeRoles("admin"),
 
+router.put("/order/update-order", isAuthenticatedUser, updateOrderStatus);
+
 
 // router.post("/getorderbyuser/:id", isAuthenticatedUser, authorizeRoles("admin"), getAllOrders);
 
