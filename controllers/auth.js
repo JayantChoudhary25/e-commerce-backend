@@ -198,7 +198,7 @@ exports.handleRefreshToken = async (req, res) => {
 };
 
 exports.updatedUser = async (req, res) => {
-  const { _id } = req.body;
+  const { _id } = req.body._id;
   validateMongoDbId(_id);
 
   try {
@@ -506,10 +506,10 @@ exports.userCart = async (req, res) => {
   }
 };
 
-// Update CART 
-exports.increaseProductCount = async (req, res) => {
-  const { productId, color } = req.body;
-  const { _id } = req.user._id;
+// Increase or decrease count of a product in the cart
+exports.updateProductCount = async (req, res) => {
+  const { productId, color, action } = req.body;
+  const { _id } = req.user;
 
   try {
     const user = await User.findById(_id);
@@ -522,8 +522,19 @@ exports.increaseProductCount = async (req, res) => {
     );
 
     if (existingProductIndex !== -1) {
-      // If the product exists, increase the count
-      existingCart[existingProductIndex].count += 1;
+      // If the product exists, update the count based on the action
+      if (action === 'increase') {
+        existingCart[existingProductIndex].count += 1;
+      } else if (action === 'decrease') {
+        if (existingCart[existingProductIndex].count > 1) {
+          existingCart[existingProductIndex].count -= 1;
+        } else {
+          // If count is already 1 and user tries to decrease, you may want to remove the product from the cart
+          existingCart.splice(existingProductIndex, 1);
+        }
+      } else {
+        return res.status(400).json({ error: 'Invalid action. Use "increase" or "decrease".' });
+      }
 
       // Update cart total
       let cartTotal = existingCart.reduce((total, product) => {
