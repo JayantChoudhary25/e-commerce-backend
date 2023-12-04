@@ -507,7 +507,7 @@ exports.userCart = async (req, res) => {
 };
 
 // Increase or decrease count of a product in the cart
-exports.updateProductCount = async (req, res) => {
+exports.increaseProductCount = async (req, res) => {
   const { productId, color, action } = req.body;
   const { _id } = req.user;
 
