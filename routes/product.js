@@ -5,9 +5,9 @@ const { createProduct, updateProduct, deleteProduct, deleteBulkProducts, getAllP
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 // isAuthenticatedUser, authorizeRoles("admin"),
 
-router.route("/createProduct").post( createProduct);
-router.route("/updateProduct/:id").put( updateProduct);
-router.route("/deleteProduct/:id").delete( deleteProduct);
+router.route("/createProduct").post( isAuthenticatedUser, authorizeRoles("admin"), createProduct);
+router.route("/updateProduct/:id").put( isAuthenticatedUser, authorizeRoles("admin"), updateProduct);
+router.route("/deleteProduct/:id").delete( isAuthenticatedUser, authorizeRoles("admin"), deleteProduct);
 router.route("/deleteBulkProducts").post( deleteBulkProducts);
 
 router.route("/getaProduct/:id").get(getaProduct);

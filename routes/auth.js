@@ -21,6 +21,7 @@ const {
   getWishlist,
   saveAddress,
   userCart,
+  increaseProductCount,
   getUserCart,
   emptyCart,
   removeFromCart,
@@ -71,6 +72,9 @@ router.route("/resetpassword/:resetToken").put(resetPassword);
 
 // Add to CART
 router.post("/cart", isAuthenticatedUser, userCart);
+
+// Update CART 
+router.post("/increaseProductCount", isAuthenticatedUser, increaseProductCount);
 
 // Add to CART without login
 router.post("/addToCart", addToCart);

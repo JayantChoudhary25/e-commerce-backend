@@ -506,6 +506,55 @@ exports.userCart = async (req, res) => {
   }
 };
 
+// Update CART 
+exports.increaseProductCount = async (req, res) => {
+  const { productId, color } = req.body;
+  const { _id } = req.user._id;
+
+  try {
+    const user = await User.findById(_id);
+    let existingCart = user.cart;
+
+    // Find the index of the product in the cart
+    const existingProductIndex = existingCart.findIndex(
+      (item) =>
+        item.product.toString() === productId.toString() && item.color === color
+    );
+
+    if (existingProductIndex !== -1) {
+      // If the product exists, increase the count
+      existingCart[existingProductIndex].count += 1;
+
+      // Update cart total
+      let cartTotal = existingCart.reduce((total, product) => {
+        return total + product.price * product.count;
+      }, 0);
+
+      user.cart = existingCart;
+      user.cartTotal = cartTotal;
+
+      // Save the user document with the updated cart
+      await user.save();
+
+      // Update the Cart document if it exists
+      let cartDocument = await Cart.findOne({ orderby: user._id });
+
+      if (cartDocument) {
+        cartDocument.products = existingCart;
+        cartDocument.cartTotal = cartTotal;
+        await cartDocument.save();
+      }
+
+      res.json(user);
+    } else {
+      res.status(404).json({ error: 'Product not found in the cart.' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the cart.' });
+  }
+};
+
 // Add to Cart without login
 exports.addToCart = async (req, res) => {
   var { productId, count, color } = req.body;
