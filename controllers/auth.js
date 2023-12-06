@@ -508,7 +508,7 @@ exports.userCart = async (req, res) => {
 
 // Increase or decrease count of a product in the cart
 exports.increaseProductCount = async (req, res) => {
-  const { productId, color, action } = req.body;
+  const { productId, action, color } = req.body;
   const userId = req.user._id;
 
   try {
@@ -519,17 +519,23 @@ exports.increaseProductCount = async (req, res) => {
 
     let existingCart = user.cart;
 
-    // Convert the provided color to lowercase (or uppercase)
-    const lowerCaseColor = color.toLowerCase();
-
     // Find the index of the product in the cart
     const existingProductIndex = existingCart.findIndex(
       (item) =>
-        item.product.toString() === productId.toString() && item.color.toLowerCase() === lowerCaseColor
+        item.product.toString() === productId.toString() && item.color === color
     );
 
     if (existingProductIndex !== -1) {
-      // If the product exists, update the count based on the action
+      // Fetch the product details for the order
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found.' });
+      }
+
+      // Calculate the price based on discountedPrice
+      const price = product.discountedPrice || 0;
+
+      // Update the count based on the action
       if (action === 'increase') {
         existingCart[existingProductIndex].count += 1;
       } else if (action === 'decrease') {
@@ -565,7 +571,37 @@ exports.increaseProductCount = async (req, res) => {
 
       res.json(user);
     } else {
-      res.status(404).json({ error: 'Product not found in the cart.' });
+      // If the product with the specified color doesn't exist, add it to the cart
+      let product = await Product.findById(productId).select("discountedPrice").exec();
+
+      existingCart.push({
+        product: productId,
+        count: 1, // Assuming a new product is added with a count of 1
+        color: color,
+        price: product ? product.discountedPrice : 0,
+      });
+
+      // Update cart total
+      let cartTotal = existingCart.reduce((total, product) => {
+        return total + product.price * product.count;
+      }, 0);
+
+      user.cart = existingCart;
+      user.cartTotal = cartTotal;
+
+      // Save the user document with the updated cart
+      await user.save();
+
+      // Update the Cart document if it exists
+      let cartDocument = await Cart.findOne({ orderby: userId });
+
+      if (cartDocument) {
+        cartDocument.products = existingCart;
+        cartDocument.cartTotal = cartTotal;
+        await cartDocument.save();
+      }
+
+      res.json(user);
     }
   } catch (error) {
     console.error(error);
