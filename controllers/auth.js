@@ -519,10 +519,13 @@ exports.increaseProductCount = async (req, res) => {
 
     let existingCart = user.cart;
 
+    // Convert the provided color to lowercase (or uppercase)
+    const lowerCaseColor = color.toLowerCase();
+
     // Find the index of the product in the cart
     const existingProductIndex = existingCart.findIndex(
       (item) =>
-        item.product.toString() === productId.toString() && item.color === color
+        item.product.toString() === productId.toString() && item.color.toLowerCase() === lowerCaseColor
     );
 
     if (existingProductIndex !== -1) {
@@ -533,7 +536,7 @@ exports.increaseProductCount = async (req, res) => {
         if (existingCart[existingProductIndex].count > 1) {
           existingCart[existingProductIndex].count -= 1;
         } else {
-          // If count is already 1 and user tries to decrease, you may want to remove the product from the cart
+          // If count is already 1 and the user tries to decrease, you may want to remove the product from the cart
           existingCart.splice(existingProductIndex, 1);
         }
       } else {
@@ -569,6 +572,7 @@ exports.increaseProductCount = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating the cart.' });
   }
 };
+
 
 // Add to Cart without login
 exports.addToCart = async (req, res) => {
