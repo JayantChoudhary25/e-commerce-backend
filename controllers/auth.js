@@ -11,6 +11,8 @@ const uniqid = require('uniqid');
 // const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
 const sendToken = require("../utils/jwtToken");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 
 exports.register = async (req, res, next) => {
   const { email, mobile } = req.body;
@@ -721,7 +723,7 @@ exports.removeFromCart = async (req, res) => {
 };
 
 // ORDER 
-exports.createOrder = async (req, res) => {
+exports.createOrderr = async (req, res) => {
   const { COD } = req.body;
   const { _id } = req.user._id;
   validateMongoDbId(_id);
@@ -770,6 +772,108 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     console.log("Error:", error);
     throw new Error(error);
+  }
+};
+
+exports.createOrder = async (req, res) => {
+  const { COD, stripeToken } = req.body;
+  const { _id } = req.user._id;
+
+  validateMongoDbId(_id);
+
+  const user = await User.findById(_id);
+  const userCart = await Cart.findOne({ orderby: user._id });
+  const finalAmount = userCart.cartTotal;
+
+  try {
+    if (!COD) {
+      // const user = await User.findById(_id);
+      // const userCart = await Cart.findOne({ orderby: user._id });
+      // const finalAmount = userCart.cartTotal;
+
+      // Create a payment intent with Stripe
+      const paymentIntent = await stripe.checkout.session.create({
+        payment_methods_type: ['card'],
+        mode: "payment",
+        line_items: userCart.products,
+        amount: finalAmount * 100, // Amount 
+        currency: 'inr',
+        metadata: { order_id: uniqid() }, // Use uniqid or any method to generate a unique order ID
+        // payment_method: stripeToken, // Assuming you get the token from the client
+        confirm: true,
+        success_url: "http://localhost:3000/success",
+        cancel_url: "http://localhost:3000/cancel"
+      });
+
+      const newOrder = await new Order({
+        products: userCart.products,
+        paymentIntent: {
+          id: paymentIntent.id,
+          method: 'Stripe',
+          amount: finalAmount,
+          status: 'Payment Confirmed',
+          created: Date.now(),
+          currency: 'inr',
+        },
+        orderby: user._id,
+        orderStatus: 'Payment Confirmed',
+      }).save();
+
+      // Update product quantities and sold counts
+      const update = userCart.products.map((item) => {
+        return {
+          updateOne: {
+            filter: { _id: item.product._id },
+            update: { $inc: { quantity: -item.count, sold: +item.count } },
+          },
+        };
+      });
+      await Product.bulkWrite(update, {});
+
+      // Save the order ID in the user's orders array
+      user.orders.push(newOrder._id);
+
+      // Clear the user's cart
+      user.cart = [];
+      user.cartTotal = 0;
+      await user.save();
+
+      // Clear the user's cart in the Cart document
+      await Cart.findOneAndDelete({ orderby: user._id });
+
+      res.json({ message: 'Payment successful', paymentIntentId: paymentIntent.id , paymentIntent });
+    } else {
+      // Handle Cash on Delivery logic here
+      const newOrder = await new Order({
+        products: userCart.products,
+        paymentIntent: {
+          id: uniqid(),
+          method: 'COD',
+          amount: finalAmount,
+          status: 'Cash on Delivery',
+          created: Date.now(),
+          currency: 'usd',
+        },
+        orderby: user._id,
+        orderStatus: 'Cash on Delivery',
+      }).save();
+
+      // Save the order ID in the user's orders array
+      user.orders.push(newOrder._id);
+
+      // Clear the user's cart
+      user.cart = [];
+      user.cartTotal = 0;
+      await user.save();
+
+      // Clear the user's cart in the Cart document
+      await Cart.findOneAndDelete({ orderby: user._id });
+
+      res.json({ message: 'success', paymentIntent: { method: 'COD', status: 'Cash on Delivery' } });
+    }
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).json({ error: 'Payment failed' });
   }
 };
 
