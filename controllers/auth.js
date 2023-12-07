@@ -776,31 +776,36 @@ exports.createOrderr = async (req, res) => {
 };
 
 exports.createOrder = async (req, res) => {
-  const { COD, stripeToken } = req.body;
+  const { COD } = req.body;
   const { _id } = req.user._id;
 
   validateMongoDbId(_id);
 
   const user = await User.findById(_id);
-  const userCart = await Cart.findOne({ orderby: user._id });
+  const userCart = await Cart.findOne({ orderby: user._id }).populate('products.product');
   const finalAmount = userCart.cartTotal;
+
+  const lineItems = userCart.products.map((product)=>({
+    price_data:{
+        currency:"inr",
+        product_data:{
+            name: product.product._id.toString(),
+            // title: product.product.title,
+        },
+        unit_amount:product.price,
+    },
+    quantity:product.count
+}));
 
   try {
     if (!COD) {
-      // const user = await User.findById(_id);
-      // const userCart = await Cart.findOne({ orderby: user._id });
-      // const finalAmount = userCart.cartTotal;
-
       // Create a payment intent with Stripe
       const session = await stripe.checkout.sessions.create({
-        payment_methods_type: ['card'],
+        payment_method_types: ['card'],
         mode: "payment",
-        line_items: userCart.products,
-        amount: finalAmount * 100, // Amount 
+        line_items: lineItems,
         currency: 'inr',
         metadata: { order_id: uniqid() }, // Use uniqid or any method to generate a unique order ID
-        // payment_method: stripeToken, // Assuming you get the token from the client
-        confirm: true,
         success_url: "http://localhost:3000/success",
         cancel_url: "http://localhost:3000/cancel"
       });
