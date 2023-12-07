@@ -792,7 +792,7 @@ exports.createOrder = async (req, res) => {
       // const finalAmount = userCart.cartTotal;
 
       // Create a payment intent with Stripe
-      const paymentIntent = await stripe.checkout.sessions.create({
+      const session = await stripe.checkout.sessions.create({
         payment_methods_type: ['card'],
         mode: "payment",
         line_items: userCart.products,
@@ -808,7 +808,7 @@ exports.createOrder = async (req, res) => {
       const newOrder = await new Order({
         products: userCart.products,
         paymentIntent: {
-          id: paymentIntent.id,
+          id: session.id,
           method: 'Stripe',
           amount: finalAmount,
           status: 'Payment Confirmed',
@@ -841,7 +841,7 @@ exports.createOrder = async (req, res) => {
       // Clear the user's cart in the Cart document
       await Cart.findOneAndDelete({ orderby: user._id });
 
-      res.json({ message: 'Payment successful', paymentIntentId: paymentIntent.id , paymentIntent });
+      res.json({ message: 'Payment successful', paymentIntentId: session.id , session });
     } else {
       // Handle Cash on Delivery logic here
       const newOrder = await new Order({
