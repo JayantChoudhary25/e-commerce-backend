@@ -6,9 +6,9 @@ const ErrorResponse = require("../utils/errorRes");
 const sendEmail = require("../utils/sendEmail");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
+// const bcrypt = require("bcryptjs");
 const uniqid = require('uniqid');
-const { generateRefreshToken } = require("../config/refreshtoken");
+// const { generateRefreshToken } = require("../config/refreshtoken");
 const { generateToken } = require("../config/jwtToken");
 const sendToken = require("../utils/jwtToken");
 
@@ -610,79 +610,6 @@ exports.increaseProductCount = async (req, res) => {
 };
 
 
-// Add to Cart without login
-exports.addToCart = async (req, res) => {
-  var { productId, count, color } = req.body;
-
-  try {
-    // Fetch the product details
-    const product = await Product.findById(productId);
-
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-
-    // Retrieve the temporary cart from the session or a temporary identifier
-    let tempCartId = req.session.tempCart || req.cookies.tempCart;
-    let tempCart;
-
-    // If a temporary cart does not exist or is not found, create a new one
-    if (!tempCartId) {
-      const newCart = new Cart({ products: [] });
-      await newCart.save();
-      req.session.tempCart = newCart._id;
-      res.cookie("tempCart", newCart._id, {
-        maxAge: 604800000, // Set the cookie expiration time (7 days)
-      });
-      tempCart = newCart; // Update tempCart to reference the new cart
-    } else {
-      // If the temporary cart exists, retrieve it
-      tempCart = await Cart.findById(tempCartId);
-
-      if (!tempCart) {
-        // Create a new cart if the existing one is not found
-        const newCart = new Cart({ products: [] });
-        await newCart.save();
-        req.session.tempCart = newCart._id;
-        res.cookie("tempCart", newCart._id, {
-          maxAge: 604800000, // Set the cookie expiration time (7 days)
-        });
-        tempCart = newCart; // Update tempCart to reference the new cart
-      }
-    }
-
-    // Check if the product is already in the cart
-    const existingProduct = tempCart.products.find(
-      (item) => item.product.toString() === productId
-    );
-
-    if (existingProduct) {
-      // If the product is in the cart, update the quantity
-      existingProduct.count += count;
-    } else {
-      // If the product is not in the cart, add it
-      tempCart.products.push({
-        product: productId,
-        count,
-        color,
-        price: product.price,
-      });
-    }
-
-    // Calculate the cart total
-    tempCart.cartTotal = tempCart.products.reduce(
-      (total, item) => total + item.price * item.count,
-      0
-    );
-
-    await tempCart.save();
-
-    res.json(tempCart);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred while adding to the cart" });
-  }
-};
 
 // Get Cart 
 exports.getUserCart = async (req, res) => {
@@ -793,110 +720,7 @@ exports.removeFromCart = async (req, res) => {
   }
 };
 
-
-// Add to cart without login
-const sessionCart = {};
-
-exports.toCart = (req, res) => {
-  const { productId, count, color } = req.body;
-
-  if (!productId || !count) {
-    return res.status(400).json({ error: 'Product ID and count are required.' });
-  }
-
-  let existingSessionCart = sessionCart[req.cookies.cartId] || [];
-  const existingProductIndex = existingSessionCart.findIndex((item) => item.productId === productId);
-
-  if (existingProductIndex !== -1) {
-    // If the product already exists in the cart, increase the count
-    existingSessionCart[existingProductIndex].count += count;
-  } else {
-    // If the product doesn't exist, add it to the cart
-    existingSessionCart.push({ productId, count, color });
-  }
-
-  // Calculate the cart total
-  const cartTotal = existingSessionCart.reduce((total, item) => {
-    // You would need to fetch the product price from your database
-    const productPrice = 10; // Replace with the actual price retrieval logic
-    return total + productPrice * item.count;
-  }, 0);
-
-  // Save the updated session cart
-  sessionCart[req.cookies.cartId] = existingSessionCart;
-
-  const cartId = generateRandomCode(8); // Implement this function to generate a unique cart ID
-  res.cookie('cartId', cartId, { maxAge: 3600000 });
-
-  // Save the cart total in the session
-  req.session.cartTotal = cartTotal;
-
-  res.json({ message: 'Product added to cart.' });
-};
-
-exports.getCart = async (req, res) => {
-  const cartId = req.session.cartId;
-  console.log(cartId);
-  
-  if (!cartId) {
-    return res.status(400).json({ error: 'Cart ID not found in session.' });
-  }
-
-  try {
-    // Retrieve the cart using the cartId
-    const tempCart = await Cart.findById(cartId);
-
-    if (!tempCart) {
-      return res.status(404).json({ error: 'Cart not found' });
-    }
-
-    // You may want to update cartTotal here if needed
-    // For example: tempCart.cartTotal = calculateTotal(tempCart.products);
-    
-    res.json({ cart: tempCart.products, cartTotal: tempCart.cartTotal });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while fetching the cart' });
-  }
-};
-
-
-function generateRandomCode(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    code += characters.charAt(randomIndex);
-  }
-
-  return code;
-}
-
-// exports.applyCoupon = async (req, res) => {
-//   const { coupon } = req.body;
-//   const { _id } = req.user;
-//   validateMongoDbId(_id);
-//   const validCoupon = await Coupon.findOne({ name: coupon });
-//   if (validCoupon === null) {
-//     throw new Error("Invalid Coupon");
-//   }
-//   const user = await User.findOne({ _id });
-//   let { cartTotal } = await Cart.findOne({
-//     orderby: user._id,
-//   }).populate("products.product");
-//   let totalAfterDiscount = (
-//     cartTotal -
-//     (cartTotal * validCoupon.discount) / 100
-//   ).toFixed(2);
-//   await Cart.findOneAndUpdate(
-//     { orderby: user._id },
-//     { totalAfterDiscount },
-//     { new: true }
-//   );
-//   res.json(totalAfterDiscount);
-// };
-
+// ORDER 
 exports.createOrder = async (req, res) => {
   const { COD } = req.body;
   const { _id } = req.user._id;
@@ -1008,3 +832,28 @@ exports.updateOrderStatus = async (req, res) => {
     throw new Error(error);
   }
 };
+
+
+// exports.applyCoupon = async (req, res) => {
+//   const { coupon } = req.body;
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+//   const validCoupon = await Coupon.findOne({ name: coupon });
+//   if (validCoupon === null) {
+//     throw new Error("Invalid Coupon");
+//   }
+//   const user = await User.findOne({ _id });
+//   let { cartTotal } = await Cart.findOne({
+//     orderby: user._id,
+//   }).populate("products.product");
+//   let totalAfterDiscount = (
+//     cartTotal -
+//     (cartTotal * validCoupon.discount) / 100
+//   ).toFixed(2);
+//   await Cart.findOneAndUpdate(
+//     { orderby: user._id },
+//     { totalAfterDiscount },
+//     { new: true }
+//   );
+//   res.json(totalAfterDiscount);
+// };

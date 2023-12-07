@@ -25,9 +25,7 @@ const {
   getUserCart,
   emptyCart,
   removeFromCart,
-  addToCart,
-  toCart,
-  getCart,
+  // tempCart,
 //   applyCoupon,
   createOrder,
   getOrders,
@@ -73,17 +71,11 @@ router.route("/resetpassword/:resetToken").put(resetPassword);
 // Add to CART
 router.post("/cart", isAuthenticatedUser, userCart);
 
+// // Add to CART Without Login 
+// router.post("/tempCart", tempCart);
+
 // Update CART 
 router.post("/increaseProductCount", isAuthenticatedUser, increaseProductCount);
-
-// Add to CART without login
-router.post("/addToCart", addToCart);
-
-// Add to Cart without login
-router.post("/toCart", toCart);
-
-// Get cart without login with session storage
-router.get("/getCart", getCart)
 
 // Get User Cart 
 router.get("/getUserCart", isAuthenticatedUser, getUserCart);

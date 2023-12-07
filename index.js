@@ -2,7 +2,9 @@ require("dotenv").config({ path: "./.env" });
 const express = require("express");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
+const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -37,8 +39,9 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use(
   session({
     secret: process.env.SECRET_SESSION,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   })
 );
 app.use("/api/auth", require("./routes/auth"));
