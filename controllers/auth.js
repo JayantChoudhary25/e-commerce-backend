@@ -805,7 +805,7 @@ exports.createOrder = async (req, res) => {
         mode: "payment",
         line_items: lineItems,
         currency: 'inr',
-        metadata: { order_id: uniqid() }, // Use uniqid or any method to generate a unique order ID
+        metadata: { order_id: uniqid() },
         success_url: "http://localhost:3000/success",
         cancel_url: "http://localhost:3000/cancel"
       });
