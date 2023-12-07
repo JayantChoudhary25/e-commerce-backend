@@ -792,7 +792,7 @@ exports.createOrder = async (req, res) => {
       // const finalAmount = userCart.cartTotal;
 
       // Create a payment intent with Stripe
-      const paymentIntent = await stripe.checkout.session.create({
+      const paymentIntent = await stripe.checkout.sessions.create({
         payment_methods_type: ['card'],
         mode: "payment",
         line_items: userCart.products,
