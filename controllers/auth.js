@@ -792,7 +792,7 @@ exports.createOrder = async (req, res) => {
             name: product.product._id.toString(),
             // title: product.product.title,
         },
-        unit_amount:product.price,
+        unit_amount:product.price * 100,
     },
     quantity:product.count
 }));
