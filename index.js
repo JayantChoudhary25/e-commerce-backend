@@ -47,6 +47,7 @@ app.use(
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/private", require("./routes/private"));
 app.use("/api/product", require("./routes/product"));
+app.use("/api/chart", require("./routes/sizeChart"));
 app.use("/api/category", require("./routes/prodCategory"));
 app.use("/api/brand", require("./routes/brand"));
 app.use("/api/color", require("./routes/color"));
