@@ -121,7 +121,7 @@ exports.forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return next(new ErrorResponse("Email could not be sent", 404));
+      return res.status(404).json(`${email} this email is not registered`);
     }
     const resetToken = user.getResetPasswordToken();
     await user.save();
@@ -129,14 +129,72 @@ exports.forgotPassword = async (req, res, next) => {
     const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
 
     const message = `
-      <h1>You have requested a Password RESET</h1>
-      <p>Please click on this link to RESET your Password</p>
-      <a href=${resetUrl} clicktracking=off>${resetUrl}</a>
+    <!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        .header {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 5px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Hello ${user.firstname},</h2>
+        </div>
+        <div class="content">
+            <p>We have received a request to reset your password for your account on <strong>E-Commerce</strong>. If you did not request this change, you can ignore this email and your password will not be changed.</p>
+            
+            <p>To reset your password, please click on the following link and follow the instructions:</p>
+            
+            <p><a class="button" href="${resetUrl}">Reset Password</a></p>
+            
+            <p>This link will expire in <strong>15 minutes</strong> for security reasons. If you need to reset your password after this time, please make another request.</p>
+        </div>
+        <div class="footer">
+            <h3>Thank you,</h3>
+            <h3>E-Commerce Team</h3>
+        </div>
+    </div>
+</body>
+</html>
     `;
     try {
       await sendEmail({
         to: user.email,
-        subject: "PASSWORD RESET",
+        subject: "Account Password Reset Link",
         text: message,
       });
       res.status(200).json({
@@ -144,12 +202,12 @@ exports.forgotPassword = async (req, res, next) => {
         data: "EMAIL SENT",
       });
     } catch (error) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
 
       await user.save();
 
-      return next(new ErrorResponse("Email could not be sent", 500));
+      return res.status(500).json("Email could not be sent");
     }
   } catch (error) {
     next(error);
@@ -157,22 +215,22 @@ exports.forgotPassword = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
-  const resetPasswordToken = crypto
+  const passwordResetToken = crypto
     .createHash("sha256")
     .update(req.params.resetToken)
     .digest("hex");
 
   try {
     const user = await User.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() },
+      passwordResetToken,
+      passwordResetExpires: { $gt: Date.now() },
     });
     if (!user) {
       return next(new ErrorResponse("Invalid Reset Token", 400));
     }
     user.password = req.body.password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
 
     await user.save();
     res.status(201).json({

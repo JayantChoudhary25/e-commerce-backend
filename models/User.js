@@ -66,14 +66,6 @@ const UserSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
-    //temp
-    // orders: [
-    //   {
-    //     product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    //     orderStatus: { type: String, default: "Pending" },
-    //     paymentStatus: { type: String, default: "Pending" },
-    //   },
-    // ],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
     passwordChangedAt: Date,
     passwordResetToken: String,
