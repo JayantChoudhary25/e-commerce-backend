@@ -21,7 +21,7 @@ exports.register = async (req, res, next) => {
 
   if (existingUser) {
     return res
-      .status(400)
+      .status(203)
       .json({ error: "User with this email or mobile number already exists." });
   }
 
