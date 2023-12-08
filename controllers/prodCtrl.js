@@ -176,12 +176,12 @@ exports.addToWishlist = async (req, res) => {
       // Remove the product from the wishlist
       user.wishlist = user.wishlist.filter(id => id.toString() !== prodId);
       await user.save();
-      res.json({ message: 'Product removed from wishlist', wishlist: user.wishlist });
+      res.json({ message: 'Product removed from wishlist', wishlist: user.wishlist, added: false });
     } else {
       // Add the product to the wishlist
       user.wishlist.push(prodId);
       await user.save();
-      res.json({ message: 'Product added to wishlist', wishlist: user.wishlist });
+      res.json({ message: 'Product added to wishlist', wishlist: user.wishlist, added: true });
     }
   } catch (error) {
     console.error(error);

@@ -8,6 +8,7 @@ const prodcategorySchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    // subCategory
   },
   {
     timestamps: true,
