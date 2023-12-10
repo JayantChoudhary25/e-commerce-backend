@@ -461,7 +461,7 @@ exports.updatePassword = async (req, res) => {
     // Verify the current password
     const isPasswordMatch = await user.matchPasswords(currentPassword);
     if (!isPasswordMatch) {
-      return res.status(401).json({ message: "Current password is incorrect" });
+      return res.status(203).json({ message: "Current password is incorrect" });
     }
 
     user.password = newPassword;
