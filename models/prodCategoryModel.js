@@ -5,12 +5,10 @@ const prodcategorySchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      unique: true,
-      index: true,
     },
-    subCategory: {
-      type: String,
-    }
+    // subCategory: {
+    //   type: String,
+    // }
   },
   {
     timestamps: true,

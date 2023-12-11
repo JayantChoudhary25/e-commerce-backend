@@ -10,6 +10,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const dotenv = require("dotenv");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 
 // Connect Database
 connectDB();
@@ -44,11 +46,16 @@ app.use(
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   })
 );
+
+// Swagger GUI API 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/private", require("./routes/private"));
 app.use("/api/product", require("./routes/product"));
 app.use("/api/chart", require("./routes/sizeChart"));
 app.use("/api/category", require("./routes/prodCategory"));
+app.use("/api/subCategory", require("./routes/subCategory"));
 app.use("/api/brand", require("./routes/brand"));
 app.use("/api/color", require("./routes/color"));
 app.use("/api/vendor", require("./routes/vendor"));
