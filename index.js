@@ -50,6 +50,11 @@ app.use(
 // Swagger GUI API 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Backend API is Running Msg 
+app.get("/", (req, res) => {
+  res.send("API is running..");
+});
+
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/private", require("./routes/private"));
 app.use("/api/product", require("./routes/product"));

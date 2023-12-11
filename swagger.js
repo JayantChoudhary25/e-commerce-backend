@@ -6,6 +6,7 @@ const doc = {
     description: "E-com",
   },
   host: 'e-commerce-backend-brown.vercel.app'
+//   host: 'localhost:4000'
 };
 
 const outputFile = "./swagger-output.json";
