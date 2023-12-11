@@ -5,7 +5,7 @@ const doc = {
     title: "My API",
     description: "E-com",
   },
-  host: "localhost:4000",
+  host: ['https://e-commerce-backend-brown.vercel.app', 'localhost:4000'],
 };
 
 const outputFile = "./swagger-output.json";

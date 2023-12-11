@@ -5,7 +5,10 @@
     "description": "E-com",
     "version": "1.0.0"
   },
-  "host": "localhost:4000",
+  "host": [
+    "https://e-commerce-backend-brown.vercel.app",
+    "localhost:4000"
+  ],
   "basePath": "/",
   "schemes": [
     "http"
