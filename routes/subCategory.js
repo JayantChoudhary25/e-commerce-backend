@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { createSubCategory, updateSubCategory, deleteSubCategory, deleteBulkSubCategory,getSubCategory, getallSubCategory } = require("../controllers/prodCategoryCtrl");
+const { createSubCategory, updateSubCategory, deleteSubCategory, deleteBulkSubCategory,getSubCategory, getallSubCategory } = require("../controllers/subCategoryCtrl");
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 router.post("/createSubCategory",isAuthenticatedUser, authorizeRoles("admin"),  createSubCategory);
