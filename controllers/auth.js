@@ -864,8 +864,8 @@ exports.createOrder = async (req, res) => {
         line_items: lineItems,
         currency: 'inr',
         metadata: { order_id: uniqid() },
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/cancel"
+        success_url: "https://nextjs-app-wheat-three.vercel.app/success",
+        cancel_url: "https://nextjs-app-wheat-three.vercel.app/cancel"
       });
 
       const newOrder = await new Order({
