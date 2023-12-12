@@ -49,7 +49,7 @@ exports.getSubCategory = async (req, res) => {
   const { id } = req.body;
   validateMongoDbId(id);
   try {
-    const getaCategory = await SubCategory.findById(id);
+    const getaCategory = await SubCategory.findById(id).populate("category");
     res.json(getaCategory);
   } catch (error) {
     throw new Error(error);
@@ -58,7 +58,7 @@ exports.getSubCategory = async (req, res) => {
 
 exports.getallSubCategory = async (req, res) => {
   try {
-    const getallCategory = await SubCategory.find();
+    const getallCategory = await SubCategory.find().populate("category");
     res.json(getallCategory);
   } catch (error) {
     throw new Error(error);
