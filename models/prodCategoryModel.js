@@ -6,6 +6,12 @@ const prodcategorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    subCategories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "SubCategory", // Reference to the SubCategory model
+      },
+    ],
   },
   {
     timestamps: true,

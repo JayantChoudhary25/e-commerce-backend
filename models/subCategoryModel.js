@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const subCategorySchema = new mongoose.Schema(
   {
     category: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PCategory", // Reference to the PCategory model
     },
     subCategory: {
       type: String,
