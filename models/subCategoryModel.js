@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const subCategorySchema = new mongoose.Schema(
   {
+    category: {
+      type: String,
+    },
     subCategory: {
       type: String,
     }
