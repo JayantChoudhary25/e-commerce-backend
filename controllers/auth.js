@@ -121,7 +121,7 @@ exports.forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json(`${email} this email is not registered`);
+      return res.status(401).json(`${email} this email is not registered`);
     }
     const resetToken = user.getResetPasswordToken();
     await user.save();
