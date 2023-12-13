@@ -99,6 +99,7 @@ exports.getAllProduct = async (req, res) => {
         { title: { $regex: `^${searchQuery}`, $options: 'i' } },
         { category: { $regex: `^${searchQuery}`, $options: 'i' } },
         { brand: { $regex: `^${searchQuery}`, $options: 'i' } },
+        { slug: { $regex: `^${searchQuery}`, $options: 'i' } },
       ];
       delete queryObj.search;
     }
