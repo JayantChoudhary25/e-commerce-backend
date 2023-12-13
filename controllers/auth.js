@@ -126,7 +126,7 @@ exports.forgotPassword = async (req, res, next) => {
     const resetToken = user.getResetPasswordToken();
     await user.save();
 
-    const resetUrl = `https://nextjs-app-wheat-three.vercel.app/passwordreset/${resetToken}`;
+    const resetUrl = `https://nextjs-app-wheat-three.vercel.app/user-password-reset/${resetToken}`;
 
     const message = `
     <!DOCTYPE html>
