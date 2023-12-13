@@ -96,10 +96,10 @@ exports.getAllProduct = async (req, res) => {
     const searchQuery = queryObj.search;
     if (searchQuery) {
       queryObj.$or = [
-        { title: { $regex: `^${searchQuery}`, $options: 'i' } },
-        { category: { $regex: `^${searchQuery}`, $options: 'i' } },
-        { brand: { $regex: `^${searchQuery}`, $options: 'i' } },
-        { slug: { $regex: `^${searchQuery}`, $options: 'i' } },
+        { title: { $regex: searchQuery, $options: 'i' } },
+        { category: { $regex: searchQuery, $options: 'i' } },
+        { brand: { $regex: searchQuery, $options: 'i' } },
+        { slug: { $regex: searchQuery, $options: 'i' } },
       ];
       delete queryObj.search;
     }
