@@ -593,13 +593,20 @@ exports.increaseProductCount = async (req, res) => {
 
       // Update the count based on the action
       if (action === 'increase') {
+        // Check if increasing the count exceeds the available quantity
+        const availableQuantity = product.quantity || 0;
+        if (existingCart[existingProductIndex].count + 1 > availableQuantity) {
+          return res.status(403).json({ error: 'Stock is limited. Cannot increase quantity beyond available stock.' });
+        }
+        
         existingCart[existingProductIndex].count += 1;
       } else if (action === 'decrease') {
         if (existingCart[existingProductIndex].count > 1) {
           existingCart[existingProductIndex].count -= 1;
         } else {
-          // If count is already 1 and the user tries to decrease, you may want to remove the product from the cart
-          existingCart.splice(existingProductIndex, 1);
+          // If count is already 1 and the user tries to decrease, you may want to keep the count as 1
+          // Alternatively, you can remove the product from the cart
+          // existingCart.splice(existingProductIndex, 1);
         }
       } else {
         return res.status(400).json({ error: 'Invalid action. Use "increase" or "decrease".' });
@@ -628,7 +635,12 @@ exports.increaseProductCount = async (req, res) => {
       res.json(user);
     } else {
       // If the product with the specified color doesn't exist, add it to the cart
-      let product = await Product.findById(productId).select("discountedPrice").exec();
+      let product = await Product.findById(productId).select("discountedPrice quantity").exec();
+
+      // Check if adding a new product exceeds the available quantity
+      if (product && product.quantity && product.quantity <= 0) {
+        return res.status(403).json({ error: 'Stock is limited. Cannot add product to the cart as it is out of stock.' });
+      }
 
       existingCart.push({
         product: productId,
@@ -664,8 +676,6 @@ exports.increaseProductCount = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating the cart.' });
   }
 };
-
-
 
 // Get Cart 
 exports.getUserCart = async (req, res) => {
