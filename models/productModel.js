@@ -56,6 +56,7 @@ const productSchema = new mongoose.Schema(
     sizeChart: [
       {
         size: String,
+        default: '',
       },
     ],
     color: [],
