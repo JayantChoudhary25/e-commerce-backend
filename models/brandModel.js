@@ -8,6 +8,12 @@ const brandSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    category: {
+      type: [String]
+    },
+    subCategory: {
+      type: [String]
+    }
   },
   {
     timestamps: true,
