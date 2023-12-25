@@ -109,8 +109,10 @@ exports.getAllProduct = async (req, res) => {
 
     let query = Product.find(JSON.parse(queryStr));
 
-    // Sorting
+    // Counting total documents without pagination
+    const totalItems = await Product.countDocuments(queryObj);
 
+    // Sorting
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
@@ -119,7 +121,6 @@ exports.getAllProduct = async (req, res) => {
     }
 
     // limiting the fields
-
     if (req.query.fields) {
       const fields = req.query.fields.split(",").join(" ");
       query = query.select(fields);
@@ -128,21 +129,29 @@ exports.getAllProduct = async (req, res) => {
     }
 
     // pagination
-
-    const page = req.query.page;
-    const limit = req.query.limit;
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
     const skip = (page - 1) * limit;
     query = query.skip(skip).limit(limit);
-    if (req.query.page) {
-      const productCount = await Product.countDocuments();
-      if (skip >= productCount) throw new Error("This Page does not exists");
-    }
-    const product = await query;
-    res.json(product);
+
+    // Fetching products
+    const products = await query;
+
+    // Calculating totalPages
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Sending response with totalPages and totalItems
+    res.json({
+      totalPages,
+      totalItems,
+      products,
+    });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 exports.getProductsByVendor = async (req, res) => {
   const { vendorId } = req.params;
