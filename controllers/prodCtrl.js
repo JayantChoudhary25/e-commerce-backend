@@ -129,8 +129,8 @@ exports.getAllProduct = async (req, res) => {
     }
 
     // pagination
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     query = query.skip(skip).limit(limit);
 
@@ -144,6 +144,7 @@ exports.getAllProduct = async (req, res) => {
     res.json({
       totalPages,
       totalItems,
+      currentPage: page,
       products,
     });
   } catch (error) {

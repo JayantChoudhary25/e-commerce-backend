@@ -317,10 +317,34 @@ exports.getallUser = async (req, res) => {
       ]);
     }
 
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    userQuery.skip(skip).limit(limit);
+
     const users = await userQuery.populate("wishlist").exec();
-    res.json(users);
+
+    // Count total items
+    const totalItems = await User.countDocuments();
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Check if requested page exists
+    if (page > totalPages) {
+      throw new Error("This Page does not exist");
+    }
+
+    res.json({
+      totalItems,
+      totalPages,
+      currentPage: page,
+      users,
+    });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -962,13 +986,40 @@ exports.getOrders = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const alluserorders = await Order.find()
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const orderQuery = Order.find()
       .populate("products.product")
       .populate("orderby")
+      .skip(skip)
+      .limit(limit)
       .exec();
-    res.json(alluserorders);
+
+    const alluserorders = await orderQuery;
+
+    // Count total items
+    const totalItems = await Order.countDocuments();
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Check if requested page exists
+    if (page > totalPages) {
+      throw new Error("This Page does not exist");
+    }
+
+    res.json({
+      totalItems,
+      totalPages,
+      currentPage: page,
+      alluserorders,
+    });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
