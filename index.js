@@ -10,8 +10,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const dotenv = require("dotenv");
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger-output.json');
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger-output.json');
 
 // Connect Database
 connectDB();
@@ -31,7 +31,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+// app.use(cors({ origin: "*" }));
 app.use(cookieParser('secret'));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
@@ -48,7 +48,7 @@ app.use(
 );
 
 // Swagger GUI API 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Backend API is Running Msg 
 app.get("/", (req, res) => {
